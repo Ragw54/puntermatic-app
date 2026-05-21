@@ -8,8 +8,7 @@ st.set_page_config(page_title="Puntermatic", page_icon="🏇", layout="centered"
 # DATABASE CONFIGURATION
 # ==============================================================================
 # Tell the app to fetch your real URL straight from the Streamlit Secrets box
-FIREBASE_DB_URL = st.secrets["FIREBASE_URL"]
-
+FIREBASE_DB_URL = st.secrets["FIREBASE_URL"] + "races.json"
 @st.cache_data(ttl=10)  # Refresh data every 10 seconds automatically
 def fetch_race_data():
     try:
