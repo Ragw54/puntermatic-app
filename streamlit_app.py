@@ -67,41 +67,31 @@ else:
 # Loop through each horse block sequentially
     for horse_name, horse_details in horses_data.items():
         
-        # 1. Capture today's variables (Matching your exact database names)
+        # 1. Capture today's variables from Firebase
         jockey = horse_details.get("Todays_Jockey_Value", "")
         trainer = horse_details.get("Todays_Trainer_Value", "")
         rating = horse_details.get("Live_Rating", "N/A")
         
-      # Catch empty strings, None values, or literal zeros
-       if str(jockey).strip() in ["", "None", "0", "0.0"]:
-       jockey_display = "Unrated"
-       else:
-       jockey_display = jockey
+        # Elegant zero-handling: Catch empty cells, text Nones, or literal zeros
+        if str(jockey).strip() in ["", "None", "0", "0.0"]:
+            jockey_display = "Unrated"
+        else:
+            jockey_display = jockey
 
-       if str(trainer).strip() in ["", "None", "0", "0.0"]:
-       trainer_display = "Unrated"
-       else:
-       trainer_display = trainer
+        if str(trainer).strip() in ["", "None", "0", "0.0"]:
+            trainer_display = "Unrated"
+        else:
+            trainer_display = trainer
         
-        # 2. Build the Premium Card Header Text (HTML injected for clean styling)
-        custom_header_html = f"""
-        <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
-            <span style="font-size: 20px; font-weight: 700; color: #111827; font-family: 'Segoe UI', Arial, sans-serif;">
-                🏇 {horse_name}
-            </span>
-            <span style="background-color: #10B981; color: white; padding: 4px 12px; border-radius: 6px; font-size: 16px; font-weight: bold; font-family: 'Segoe UI', Arial, sans-serif;">
-                Rating: {rating}
-            </span>
-        </div>
-        """
+        # 2. Native text string title for the clean dropdown button style
+        expander_title = f"🏇 {horse_name} | Rating: {rating}"
         
-        # 3. Use Streamlit's native expander container to handle the open/close clicking, 
-        # but the custom HTML header inside it handles the visual styling
-        with st.expander(custom_header_html, expanded=False):
+        # 3. Everything inside this dropdown block is precisely indented by 8 spaces
+        with st.expander(expander_title, expanded=False):
             
-            # Display today's extra parameters with explicit bold labels
+            # Display today's extra parameters cleanly inside the panel
             st.markdown(f"""
-                <p style="font-size: 15px; color: #4B5563; margin-top: 5px; margin-bottom: 15px; font-family: 'Segoe UI', Arial, sans-serif;">
+                <p style="font-size: 15px; color: #4B5563; margin-top: 5px; margin-bottom: 12px; font-family: 'Segoe UI', Arial, sans-serif;">
                     <strong style="color: #1F2937;">Today's Jockey:</strong> {jockey_display} &nbsp;|&nbsp; 
                     <strong style="color: #1F2937;">Today's Trainer:</strong> {trainer_display}
                 </p>
@@ -124,7 +114,7 @@ else:
                         "Track": start_data.get("Track_Status", "")
                     })
                 
-                # Display the data grid inside the container cleanly
+                # Display the data grid inside the open dropdown container cleanly
                 st.table(history_table)
             else:
                 st.caption("No previous starts data available for this runner.")
