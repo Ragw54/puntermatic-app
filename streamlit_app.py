@@ -26,6 +26,24 @@ st.markdown("""
         border: none !important;
     }
 
+    /* TRANSFORM EXPANDERS: Make them look like premium white cards */
+    div[data-testid="stExpander"] {
+        background-color: #FFFFFF !important;
+        border-radius: 10px !important;
+        border: none !important;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.05) !important;
+        margin-bottom: 15px !important;
+        border-left: 6px solid #1E3A8A !important; /* Premium navy-blue left accent strip */
+    }
+
+    /* Style the clickable text header inside the expander bar */
+    div[data-testid="stExpander"] details summary {
+        font-size: 18px !important;
+        font-weight: 700 !important;
+        color: #111827 !important;
+        padding: 10px 5px !important;
+    }
+
     /* Style the historical table container to blend with the card */
     div.stTable {
         background-color: #FFFFFF !important;
@@ -64,7 +82,8 @@ else:
 
     # Get the horse records for the selected race sheet
     horses_data = all_races[selected_race]
-# Loop through each horse block sequentially
+
+    # Loop through each horse block sequentially
     for horse_name, horse_details in horses_data.items():
         
         # 1. Capture today's variables from Firebase
@@ -86,15 +105,24 @@ else:
         # 2. Native text string title for the clean dropdown button style
         expander_title = f"🏇 {horse_name} | Rating: {rating}"
         
-        # 3. Everything inside this dropdown block is precisely indented by 8 spaces
+        # 3. Open/Close dropdown capability with hidden categories inside
         with st.expander(expander_title, expanded=False):
             
-            # Display today's extra parameters cleanly inside the panel
+            # Put Today's Jockey and Trainer inside a dedicated shaded row bar
             st.markdown(f"""
-                <p style="font-size: 15px; color: #4B5563; margin-top: 5px; margin-bottom: 12px; font-family: 'Segoe UI', Arial, sans-serif;">
-                    <strong style="color: #1F2937;">Today's Jockey:</strong> {jockey_display} &nbsp;|&nbsp; 
-                    <strong style="color: #1F2937;">Today's Trainer:</strong> {trainer_display}
-                </p>
+                <div style="
+                    background-color: #F8F9FA; 
+                    padding: 12px 15px; 
+                    border-radius: 6px; 
+                    margin-top: 5px; 
+                    margin-bottom: 15px; 
+                    border-left: 4px solid #1E3A8A;
+                ">
+                    <p style="font-size: 15px; color: #4B5563; margin: 0; font-family: 'Segoe UI', Arial, sans-serif;">
+                        <strong style="color: #1F2937;">Today's Jockey:</strong> {jockey_display} &nbsp;|&nbsp; 
+                        <strong style="color: #1F2937;">Today's Trainer:</strong> {trainer_display}
+                    </p>
+                </div>
             """, unsafe_allow_html=True)
             
             # Extract previous starts history sub-tree
@@ -118,4 +146,3 @@ else:
                 st.table(history_table)
             else:
                 st.caption("No previous starts data available for this runner.")
-    
