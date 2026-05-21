@@ -83,8 +83,21 @@ else:
     # Get the horse records for the selected race sheet
     horses_data = all_races[selected_race]
 
-    # Loop through each horse block sequentially
-    for horse_name, horse_details in horses_data.items():
+    # ==============================================================================
+    # SORTING LOGIC: Convert to a list and sort by Live_Rating descending
+    # ==============================================================================
+    def get_rating_value(item):
+        try:
+            # Try to turn the rating into a decimal number for accurate sorting
+            return float(item[1].get("Live_Rating", 0))
+        except (ValueError, TypeError):
+            return 0.0
+
+    # Sort the horses: highest rating goes to the top
+    sorted_horses = sorted(horses_data.items(), key=get_rating_value, reverse=True)
+
+    # Loop through each horse block in sorted order
+    for horse_name, horse_details in sorted_horses:
         
         # 1. Capture today's variables from Firebase
         jockey = horse_details.get("Todays_Jockey_Value", "")
