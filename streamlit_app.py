@@ -1,14 +1,46 @@
 import streamlit as st
 import requests
 
-# Set mobile-first page layout configurations
-st.set_page_config(page_title="Puntermatic", page_icon="🏇", layout="centered")
+# 1. FORCE THE WIDE LAYOUT FOR PERFECT CROSS-SCREEN ALIGNMENT
+st.set_page_config(page_title="Puntermatic", page_icon="🏇", layout="wide")
+
+# 2. INJECT CUSTOM THEMING (COLORS, FONTS, AND CARDS)
+st.markdown("""
+    <style>
+    /* Force main app background color (Light slate gray look) */
+    .stApp {
+        background-color: #F3F4F6;
+    }
+    
+    /* Style all dropdown menus and headers to use sharp fonts */
+    h1, h2, h3, p, label {
+        font-family: 'Segoe UI', Arial, sans-serif !important;
+        color: #1F2937 !important;
+    }
+    
+    /* Custom styling to make data tables look clean on mobile */
+    div[data-testid="stDataFrame"] {
+        background-color: white;
+        padding: 10px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+    
+    /* Style your selection buttons */
+    div.stButton > button {
+        background-color: #1E3A8A !important;
+        color: white !important;
+        border-radius: 6px !important;
+        border: none !important;
+    }
+    </style>
+""", unsafe_allow_html=True)
 
 # ==============================================================================
 # DATABASE CONFIGURATION
 # ==============================================================================
-# Tell the app to fetch your real URL straight from the Streamlit Secrets box
 FIREBASE_DB_URL = st.secrets["FIREBASE_URL"] + "races.json"
+
 @st.cache_data(ttl=10)  # Refresh data every 10 seconds automatically
 def fetch_race_data():
     try:
