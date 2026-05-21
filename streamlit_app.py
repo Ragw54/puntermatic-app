@@ -72,9 +72,16 @@ else:
         trainer = horse_details.get("Todays_Trainer_Value", "")
         rating = horse_details.get("Live_Rating", "N/A")
         
-        # Handle blank or missing text gracefully
-        jockey_display = jockey if jockey else "Not Listed"
-        trainer_display = trainer if trainer else "Not Listed"
+      # Catch empty strings, None values, or literal zeros
+       if str(jockey).strip() in ["", "None", "0", "0.0"]:
+       jockey_display = "Unrated"
+       else:
+       jockey_display = jockey
+
+       if str(trainer).strip() in ["", "None", "0", "0.0"]:
+       trainer_display = "Unrated"
+       else:
+       trainer_display = trainer
         
         # 2. Build the Premium Card Header Text (HTML injected for clean styling)
         custom_header_html = f"""
