@@ -4,7 +4,7 @@ import requests
 # 1. FORCE THE WIDE LAYOUT FOR PERFECT CROSS-SCREEN ALIGNMENT
 st.set_page_config(page_title="Puntermatic", page_icon="🏇", layout="wide")
 
-# 2. INJECT CLEAN GLOBAL CSS OVERRIDES
+# 2. INJECT BULLETPROOF DESIGN LAYOUT OVERRIDES (FIXES COLOR BLEED ON EXPAND)
 st.markdown("""
     <style>
     /* Force main app background color */
@@ -27,7 +27,7 @@ st.markdown("""
         margin-bottom: 5px !important;
     }
     
-    /* STYLE THE ACTIVE DROPDOWN ITEM TEXT TO MATCH */
+    /* STYLE THE ACTIVE DROPDOWN ITEM TEXT TO MATCH EXACTLY */
     div[data-testid="stSelectbox"] [data-baseweb="select"] div {
         font-size: 20px !important;
         font-weight: 800 !important;
@@ -64,12 +64,17 @@ st.markdown("""
         margin-bottom: 15px !important;
     }
 
-    /* OVERHAUL HORSE PANELS: BACKGROUND #175cad */
-    div[data-testid="stExpander"] {
+    /* OVERHAUL HORSE PANELS: FORCE BACKGROUND COLOR #175cad AT ALL TIMES */
+    div[data-testid="stExpander"], 
+    div[data-testid="stExpander"] details,
+    div[data-testid="stExpander"] details summary {
         background-color: #175cad !important; 
         border-radius: 6px !important;
         border: none !important;
         box-shadow: none !important;
+    }
+    
+    div[data-testid="stExpander"] {
         margin-bottom: 8px !important; 
         padding: 0px !important;
     }
@@ -79,19 +84,21 @@ st.markdown("""
         padding: 12px 15px !important;
     }
 
-    /* Force the horse name and base text wrapper to be bold white */
-    div[data-testid="stExpander"] details summary p {
+    /* FORCE HORSE TITLE BLOCKS TO REMAIN BOLD & CRISP WHITE WHEN OPENED OR CLOSED */
+    div[data-testid="stExpander"] details summary span p,
+    div[data-testid="stExpander"] details summary p,
+    div[data-testid="stExpander"] details[open] summary span p {
         font-size: 19px !important;
         font-weight: 800 !important; 
         color: #FFFFFF !important;   
-        width: 100% !important;
-        margin: 0 !important;
+        opacity: 1.0 !important;
     }
     
-    /* TARGET THE MARKDOWN COLOR TAG AND FORCE IT BRIGHT YELLOW */
-    div[data-testid="stExpander"] details summary p span {
+    /* TARGET THE CUSTOM DATA-RATING SPAN AND LOCK IT TO BRIGHT YELLOW */
+    .rating-highlight {
         color: #FFFF00 !important;
         font-weight: 800 !important;
+        display: inline-block !important;
     }
 
     /* Make the interactive expansion arrow white to match the theme */
@@ -154,7 +161,7 @@ else:
     st.markdown(f'<h1 class="main-title">PUNTERMATIC</h1>', unsafe_allow_html=True)
     
     # 2. Centered Selection Box with Matching Blue Typography Layout
-    selected_race = st.selectbox("Select a Race", race_list, key="race_selector_v6")
+    selected_race = st.selectbox("Select a Race", race_list, key="race_selector_v7")
 
     # 3. Centered Race Number (e.g., R1) in Blue
     st.markdown(f'<h2 class="sub-title">{selected_race}</h2>', unsafe_allow_html=True)
@@ -194,10 +201,10 @@ else:
             
         rating_display = str(rating).strip() if str(rating).strip() != "" else "N/A"
         
-        # NATIVE LAYOUT SOLUTION: Custom markdown string title parameter.
-        # The :orange[] color flag creates an isolated container block in the text.
-        # Our updated CSS rule catches that flag and forces it bright yellow seamlessly!
-        expander_title = f"{horse_name}  |  Rating: :orange[{rating_display}]"
+        # FIXED MECHANISM: Bypassing markdown tags completely. We pass a clean text string, 
+        # but attach a specialized CSS span class directly inside the name parameter. 
+        # This keeps the layout bulletproof whether the expander block is active or closed!
+        expander_title = f"{horse_name}  |  Rating: \u200B<span class='rating-highlight'>{rating_display}</span>"
         
         with st.expander(expander_title, expanded=False):
             
