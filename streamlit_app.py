@@ -4,7 +4,7 @@ import requests
 # 1. FORCE THE WIDE LAYOUT FOR PERFECT CROSS-SCREEN ALIGNMENT
 st.set_page_config(page_title="Puntermatic", page_icon="🏇", layout="wide")
 
-# 2. INJECT CLEAN GLOBAL CSS OVERRIDES (NO TRICKY SELECTION HACKS)
+# 2. INJECT BULLETPROOF DESIGN LAYOUT OVERRIDES (FIXES ALL COLOR DROPS & TEXT LEAKS)
 st.markdown("""
     <style>
     /* Force main app background color */
@@ -64,21 +64,36 @@ st.markdown("""
         margin-bottom: 15px !important;
     }
 
-    /* OVERHAUL HORSE PANELS: BACKGROUND #175cad WITH NO TEXT OVERLAPS */
-    div[data-testid="stExpander"] {
+    /* HARD LOCK THE BLUE BACKGROUND COLOR REGARDLESS OF OPEN/CLOSED DROPDOWN STATE */
+    div[data-testid="stExpander"],
+    div[data-testid="stExpander"] details,
+    div[data-testid="stExpander"] details summary {
         background-color: #175cad !important; 
         border-radius: 6px !important;
         border: none !important;
         box-shadow: none !important;
+    }
+    
+    div[data-testid="stExpander"] {
         margin-bottom: 8px !important; 
         padding: 0px !important;
     }
 
-    /* Formatting for the native drop-down header area text elements */
-    div[data-testid="stExpander"] details summary p {
+    /* Formatting for the native drop-down header bar padding layout */
+    div[data-testid="stExpander"] details summary {
+        padding: 12px 15px !important;
+    }
+
+    /* BRUTE-FORCE FIXED: Overrides Streamlit styles to force the entire title text row to remain visible, bold, and pure white */
+    div[data-testid="stExpander"] details summary p,
+    div[data-testid="stExpander"] details summary span,
+    div[data-testid="stExpander"] details[open] summary p,
+    div[data-testid="stExpander"] details[open] summary span {
         font-size: 19px !important;
         font-weight: 800 !important; 
         color: #FFFFFF !important;   
+        opacity: 1.0 !important;
+        display: inline-block !important;
     }
 
     /* Make the interactive expansion arrow white to match the theme */
@@ -141,7 +156,7 @@ else:
     st.markdown(f'<h1 class="main-title">PUNTERMATIC</h1>', unsafe_allow_html=True)
     
     # 2. SELECT BOX INSTANCE
-    selected_race = st.selectbox("Select a Race", race_list, key="race_selector_final_v1")
+    selected_race = st.selectbox("Select a Race", race_list, key="race_selector_final_v2")
 
     # 3. SUB-TITLE HEADER
     st.markdown(f'<h2 class="sub-title">{selected_race}</h2>', unsafe_allow_html=True)
@@ -181,14 +196,24 @@ else:
             
         rating_display = str(rating).strip() if str(rating).strip() != "" else "N/A"
         
-        # BULLETPROOF SOLUTION: Using safe, native Streamlit text formatting strings.
-        # ':yellow[**Text**]' highlights and bolds text natively without using HTML tags.
-        expander_title = f"{horse_name}  |  Rating: :yellow[**{rating_display}**]"
+        # FIXED: Plain text title to prevent any raw text tag leaks on screen.
+        # We target the 'Rating:' substring directly using a clean, native Streamlit sub-color block hack.
+        expander_title = f"{horse_name}  |  Rating: :rainbow[{rating_display}]"
         
         with st.expander(expander_title, expanded=False):
             
-            # Connection summary information row block
+            # THE BULLETPROOF TEXT FIX: Injecting a hidden CSS rule right inside the container block.
+            # This locks onto the generated text spans above and forces the rating text bright yellow (#FFFF00)
             st.markdown(f"""
+                <style>
+                div[data-testid="stExpander"] details summary p span,
+                div[data-testid="stExpander"] details summary span span {{
+                    color: #FFFF00 !important;
+                    background: none !important;
+                    -webkit-text-fill-color: #FFFF00 !important;
+                }}
+                </style>
+                
                 <div style="
                     background-color: #F8F9FA; 
                     padding: 12px 15px; 
