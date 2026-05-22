@@ -4,7 +4,7 @@ import requests
 # 1. FORCE THE WIDE LAYOUT FOR PERFECT CROSS-SCREEN ALIGNMENT
 st.set_page_config(page_title="Puntermatic", page_icon="🏇", layout="wide")
 
-# 2. INJECT BULLETPROOF LAYOUT OVERRIDES (NO ABSOLUTE OFFSETS)
+# 2. INJECT CLEAN GLOBAL CSS OVERRIDES
 st.markdown("""
     <style>
     /* Force main app background color */
@@ -17,7 +17,7 @@ st.markdown("""
         font-family: 'Segoe UI', Arial, sans-serif !important;
     }
 
-    /* CENTER & STYLE THE DROPDOWN HEADER LABEL */
+    /* CENTER & STYLE THE DROPDOWN HEADER LABEL TO 175cad */
     div[data-testid="stSelectbox"] label p {
         font-size: 20px !important;
         font-weight: 800 !important;
@@ -27,7 +27,7 @@ st.markdown("""
         margin-bottom: 5px !important;
     }
     
-    /* ENFORCE DROPDOWN MENU TEXT COLOR AND SIZE */
+    /* STYLE THE ACTIVE DROPDOWN ITEM TEXT TO MATCH */
     div[data-testid="stSelectbox"] [data-baseweb="select"] div {
         font-size: 20px !important;
         font-weight: 800 !important;
@@ -35,10 +35,11 @@ st.markdown("""
         text-align: center !important;
     }
 
-    /* Center align select box box design width */
+    /* Center align select box container width */
     div[data-testid="stSelectbox"] [data-baseweb="select"] {
         max-width: 400px !important;
         margin: 0 auto !important;
+        border-color: #175cad !important;
     }
 
     /* CENTER AND UPCASE THE MAIN PUNTERMATIC HEADER IN #175cad */
@@ -73,24 +74,30 @@ st.markdown("""
         padding: 0px !important;
     }
 
-    /* Completely suppress native text rendering inside the summary block */
-    div[data-testid="stExpander"] details summary span {
-        display: none !important;
+    /* Style the text layout inside the native trigger bar */
+    div[data-testid="stExpander"] details summary {
+        padding: 12px 15px !important;
     }
 
-    /* Reformat the summary area to behave as an auto-sizing flex box container */
-    div[data-testid="stExpander"] details summary {
-        padding: 0px !important; /* Managed by internal block padding now */
-        display: flex !important;
-        align-items: center !important;
+    /* Force the horse name and base text wrapper to be bold white */
+    div[data-testid="stExpander"] details summary p {
+        font-size: 19px !important;
+        font-weight: 800 !important; 
+        color: #FFFFFF !important;   
+        width: 100% !important;
+        margin: 0 !important;
     }
     
-    /* Style the native disclosure icon wrapper to keep it clean and white */
+    /* TARGET THE MARKDOWN COLOR TAG AND FORCE IT BRIGHT YELLOW */
+    div[data-testid="stExpander"] details summary p span {
+        color: #FFFF00 !important;
+        font-weight: 800 !important;
+    }
+
+    /* Make the interactive expansion arrow white to match the theme */
     div[data-testid="stExpander"] details summary svg {
         fill: #FFFFFF !important;
         color: #FFFFFF !important;
-        margin-left: 15px !important;
-        margin-right: -5px !important;
     }
 
     /* Expander Inner Content Container (The white block that opens) */
@@ -143,13 +150,13 @@ if not all_races:
 else:
     race_list = sorted(list(all_races.keys()))
     
-    # 1. MAIN TITLE
+    # 1. UPPERCASE & Centered Main Title in 175cad
     st.markdown(f'<h1 class="main-title">PUNTERMATIC</h1>', unsafe_allow_html=True)
     
-    # 2. SELECTION DROPDOWN MENU
-    selected_race = st.selectbox("Select a Race", race_list, key="race_selector_v5")
+    # 2. Centered Selection Box with Matching Blue Typography Layout
+    selected_race = st.selectbox("Select a Race", race_list, key="race_selector_v6")
 
-    # 3. SUB-TITLE HEADER
+    # 3. Centered Race Number (e.g., R1) in Blue
     st.markdown(f'<h2 class="sub-title">{selected_race}</h2>', unsafe_allow_html=True)
     st.write("---")
 
@@ -187,26 +194,12 @@ else:
             
         rating_display = str(rating).strip() if str(rating).strip() != "" else "N/A"
         
-        # FIXED: Using a clean, inline HTML Flex-Row layout block inside the title setup.
-        # This replaces absolute pixels with relative flex boxes, locking the text perfectly inside the panel!
-        custom_header_html = f"""
-            <div style="
-                width: 100%; 
-                padding: 12px 15px 12px 5px; 
-                display: flex; 
-                justify-content: space-between; 
-                align-items: center;
-                font-family: 'Segoe UI', Arial, sans-serif;
-            ">
-                <span style="font-size: 19px; font-weight: 800; color: #FFFFFF;">{horse_name}</span>
-                <span style="font-size: 19px; font-weight: 800; color: #FFFFFF;">
-                    Rating: <span style="color: #FFFF00 !important;">{rating_display}</span>
-                </span>
-            </div>
-        """
+        # NATIVE LAYOUT SOLUTION: Custom markdown string title parameter.
+        # The :orange[] color flag creates an isolated container block in the text.
+        # Our updated CSS rule catches that flag and forces it bright yellow seamlessly!
+        expander_title = f"{horse_name}  |  Rating: :orange[{rating_display}]"
         
-        # We pass the custom structural layout row directly into the click header
-        with st.expander(custom_header_html, expanded=False):
+        with st.expander(expander_title, expanded=False):
             
             # Connection summary information row block
             st.markdown(f"""
