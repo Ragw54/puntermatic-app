@@ -4,7 +4,7 @@ import requests
 # 1. FORCE THE WIDE LAYOUT FOR PERFECT CROSS-SCREEN ALIGNMENT
 st.set_page_config(page_title="Puntermatic", page_icon="🏇", layout="wide")
 
-# 2. INJECT BULLETPROOF DESIGN LAYOUT OVERRIDES (FIXES COLOR BLEED ON EXPAND)
+# 2. INJECT CLEAN GLOBAL CSS OVERRIDES (NO TRICKY SELECTION HACKS)
 st.markdown("""
     <style>
     /* Force main app background color */
@@ -64,41 +64,21 @@ st.markdown("""
         margin-bottom: 15px !important;
     }
 
-    /* OVERHAUL HORSE PANELS: FORCE BACKGROUND COLOR #175cad AT ALL TIMES */
-    div[data-testid="stExpander"], 
-    div[data-testid="stExpander"] details,
-    div[data-testid="stExpander"] details summary {
+    /* OVERHAUL HORSE PANELS: BACKGROUND #175cad WITH NO TEXT OVERLAPS */
+    div[data-testid="stExpander"] {
         background-color: #175cad !important; 
         border-radius: 6px !important;
         border: none !important;
         box-shadow: none !important;
-    }
-    
-    div[data-testid="stExpander"] {
         margin-bottom: 8px !important; 
         padding: 0px !important;
     }
 
-    /* Style the text layout inside the native trigger bar */
-    div[data-testid="stExpander"] details summary {
-        padding: 12px 15px !important;
-    }
-
-    /* FORCE HORSE TITLE BLOCKS TO REMAIN BOLD & CRISP WHITE WHEN OPENED OR CLOSED */
-    div[data-testid="stExpander"] details summary span p,
-    div[data-testid="stExpander"] details summary p,
-    div[data-testid="stExpander"] details[open] summary span p {
+    /* Formatting for the native drop-down header area text elements */
+    div[data-testid="stExpander"] details summary p {
         font-size: 19px !important;
         font-weight: 800 !important; 
         color: #FFFFFF !important;   
-        opacity: 1.0 !important;
-    }
-    
-    /* TARGET THE CUSTOM DATA-RATING SPAN AND LOCK IT TO BRIGHT YELLOW */
-    .rating-highlight {
-        color: #FFFF00 !important;
-        font-weight: 800 !important;
-        display: inline-block !important;
     }
 
     /* Make the interactive expansion arrow white to match the theme */
@@ -157,13 +137,13 @@ if not all_races:
 else:
     race_list = sorted(list(all_races.keys()))
     
-    # 1. UPPERCASE & Centered Main Title in 175cad
+    # 1. MAIN PUNTERMATIC HEADER
     st.markdown(f'<h1 class="main-title">PUNTERMATIC</h1>', unsafe_allow_html=True)
     
-    # 2. Centered Selection Box with Matching Blue Typography Layout
-    selected_race = st.selectbox("Select a Race", race_list, key="race_selector_v7")
+    # 2. SELECT BOX INSTANCE
+    selected_race = st.selectbox("Select a Race", race_list, key="race_selector_final_v1")
 
-    # 3. Centered Race Number (e.g., R1) in Blue
+    # 3. SUB-TITLE HEADER
     st.markdown(f'<h2 class="sub-title">{selected_race}</h2>', unsafe_allow_html=True)
     st.write("---")
 
@@ -201,10 +181,9 @@ else:
             
         rating_display = str(rating).strip() if str(rating).strip() != "" else "N/A"
         
-        # FIXED MECHANISM: Bypassing markdown tags completely. We pass a clean text string, 
-        # but attach a specialized CSS span class directly inside the name parameter. 
-        # This keeps the layout bulletproof whether the expander block is active or closed!
-        expander_title = f"{horse_name}  |  Rating: \u200B<span class='rating-highlight'>{rating_display}</span>"
+        # BULLETPROOF SOLUTION: Using safe, native Streamlit text formatting strings.
+        # ':yellow[**Text**]' highlights and bolds text natively without using HTML tags.
+        expander_title = f"{horse_name}  |  Rating: :yellow[**{rating_display}**]"
         
         with st.expander(expander_title, expanded=False):
             
