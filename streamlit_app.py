@@ -84,12 +84,16 @@ else:
     horses_data = all_races[selected_race]
 
     # ==============================================================================
-    # SORTING LOGIC: Convert to a list and sort by Live_Rating descending
+    # SORTING LOGIC: Flexible fallback to check both space and underscore headers
     # ==============================================================================
     def get_rating_value(item):
         try:
-            # Try to turn the rating into a decimal number for accurate sorting
-            return float(item[1].get("Live_Rating", 0))
+            details = item[1]
+            # Check 'Live Rating' (with space) first, then fall back to underscore version
+            val = details.get("Live Rating", details.get("Live_Rating", 0))
+            if val is None or str(val).strip() == "" or str(val).strip().upper() == "N/A":
+                return 0.0
+            return float(str(val).strip())
         except (ValueError, TypeError):
             return 0.0
 
@@ -99,10 +103,10 @@ else:
     # Loop through each horse block in sorted order
     for horse_name, horse_details in sorted_horses:
         
-        # 1. Capture today's variables from Firebase
-        jockey = horse_details.get("Todays_Jockey_Value", "")
-        trainer = horse_details.get("Todays_Trainer_Value", "")
-        rating = horse_details.get("Live_Rating", "N/A")
+        # 1. Capture variables matching your exact space-separated Excel headers
+        jockey = horse_details.get("Today's Jockey Value", horse_details.get("Todays_Jockey_Value", ""))
+        trainer = horse_details.get("Today's Trainer Value", horse_details.get("Todays_Trainer_Value", ""))
+        rating = horse_details.get("Live Rating", horse_details.get("Live_Rating", "N/A"))
         
         # Elegant zero-handling: Catch empty cells, text Nones, or literal zeros
         if str(jockey).strip() in ["", "None", "0", "0.0"]:
