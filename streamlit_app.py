@@ -4,10 +4,10 @@ import requests
 # 1. FORCE THE WIDE LAYOUT FOR PERFECT CROSS-SCREEN ALIGNMENT
 st.set_page_config(page_title="Puntermatic", page_icon="🏇", layout="wide")
 
-# 2. INJECT CUSTOM STREAMLIT APP OVERRIDES
+# 2. INJECT CLEAN GLOBAL OVERRIDES (NO ABSOLUTE POSITIONING)
 st.markdown("""
     <style>
-    /* Force main app background color (Light slate gray look) */
+    /* Force main app background color */
     .stApp {
         background-color: #F3F4F6;
     }
@@ -21,14 +21,14 @@ st.markdown("""
     div[data-testid="stSelectbox"] label p {
         font-size: 20px !important;
         font-weight: 800 !important;
-        color: #175cad !important; /* Changed to #175cad */
+        color: #175cad !important; 
         margin-bottom: 5px !important;
     }
     
-    /* Spacing fixes for the newly moved dropdown position */
+    /* Perfect spacing for the moved dropdown position */
     div[data-testid="stSelectbox"] {
-        margin-top: 10px !important;
-        margin-bottom: 15px !important;
+        margin-top: 5px !important;
+        margin-bottom: 5px !important;
     }
 
     /* TIGHTEN MAIN HEADER MARGINS */
@@ -59,19 +59,25 @@ st.markdown("""
         padding: 0px !important;
     }
 
-    /* Remove the default text rendering so our custom yellow/white text row takes over */
-    div[data-testid="stExpander"] details summary span {
-        display: none !important;
-    }
-
-    /* Style the clickable area inside the horse panel bar */
+    /* Restore and style the clickable native header text */
     div[data-testid="stExpander"] details summary {
         padding: 12px 15px !important;
-        display: flex !important;
-        align-items: center !important;
-        justify-content: space-between !important;
+    }
+
+    /* Make the horse name portion bold and clean white */
+    div[data-testid="stExpander"] details summary span p {
+        font-size: 19px !important;
+        font-weight: 800 !important; 
+        color: #FFFFFF !important;   
     }
     
+    /* TARGET EVERY RED TEXT VALUE INSIDE THE EXPANDER SUMMARY AND FORCE IT YELLOW */
+    /* Markdown colored strings render as HTML color elements behind the scenes */
+    div[data-testid="stExpander"] details summary span p span[style*="color: red"],
+    div[data-testid="stExpander"] details summary span p color[color="red"] {
+        color: #FFFF00 !important;
+    }
+
     /* Make the interactive expansion arrow white to match the theme */
     div[data-testid="stExpander"] details summary svg {
         fill: #FFFFFF !important;
@@ -124,16 +130,15 @@ all_races = fetch_race_data()
 if not all_races:
     st.error("Unable to connect to Firebase database URL.")
 else:
-    # Build clean array for safe indexing map options
     race_list = sorted(list(all_races.keys()))
     
-    # 3. MOVED POSITION: Puntermatic Header goes FIRST
+    # 1. Puntermatic Title at the absolute top
     st.markdown(f'<h1 class="main-title">Puntermatic</h1>', unsafe_allow_html=True)
     
-    # 3. MOVED POSITION: Select box now sits right under the header
-    selected_race = st.selectbox("Select a Race", race_list, key="race_selector_main")
+    # 2. Select box colored blue sitting in between the text headers
+    selected_race = st.selectbox("Select a Race", race_list, key="race_selector_v3")
 
-    # 3. MOVED POSITION: R1 text goes immediately below the select box
+    # 3. R1 header sitting two text sizes lower
     st.markdown(f'<h2 class="sub-title">{selected_race}</h2>', unsafe_allow_html=True)
     st.write("---")
 
@@ -171,28 +176,12 @@ else:
             
         rating_display = str(rating).strip() if str(rating).strip() != "" else "N/A"
         
-        # Unique tracking key to fix the expansion toggle drop bug completely
-        unique_key = f"panel_{selected_race}_{horse_name.replace(' ', '_')}"
+        # FIX STAINED TEXT TAGS: We pass a clear Markdown text string to the title parameter.
+        # We flag the rating value with a standard ":red[]" markdown wrapper. 
+        # Our custom CSS block intercepting from the top swaps that red tag into bright bright yellow!
+        expander_title = f"{horse_name}  |  Rating: :red[{rating_display}]"
         
-        # Render expander block with blank default text label
-        with st.expander("", expanded=False):
-            
-            # FORCE INJECT CUSTOM HEADER TEXT BLOCK RIGHT INSIDE THE CLICK BAR
-            # This bypasses Streamlit text filters to force the bold white horse name and bright yellow rating text!
-            st.markdown(f"""
-                <div style="
-                    position: absolute;
-                    top: -42px;
-                    left: 45px;
-                    pointer-events: none;
-                    z-index: 999;
-                    font-family: 'Segoe UI', Arial, sans-serif;
-                ">
-                    <span style="font-size: 19px; font-weight: 800; color: #FFFFFF;">{horse_name}</span>
-                    <span style="font-size: 19px; font-weight: 800; color: #FFFFFF;"> &nbsp;|&nbsp; Rating: </span>
-                    <span style="font-size: 19px; font-weight: 800; color: #FFFF00;">{rating_display}</span>
-                </div>
-            """, unsafe_allow_html=True)
+        with st.expander(expander_title, expanded=False):
             
             # Connection summary information row block
             st.markdown(f"""
