@@ -17,7 +17,7 @@ st.markdown("""
         font-family: 'Segoe UI', Arial, sans-serif !important;
     }
 
-    /* CENTER & COLOR THE DROPDOWN LABEL TO SIGNATURE BLUE */
+    /* CENTER & STYLE THE DROPDOWN HEADER LABEL */
     div[data-testid="stSelectbox"] label p {
         font-size: 20px !important;
         font-weight: 800 !important;
@@ -27,10 +27,19 @@ st.markdown("""
         margin-bottom: 5px !important;
     }
     
-    /* Align select box input box to the center column design */
+    /* MATCH DROPDOWN MENU TEXT SIZE, WEIGHT, AND COLOR TO THE LABEL */
+    div[data-testid="stSelectbox"] [data-baseweb="select"] div {
+        font-size: 20px !important;
+        font-weight: 800 !important;
+        color: #175cad !important;
+        text-align: center !important;
+    }
+
+    /* Align select box container to the center column design */
     div[data-testid="stSelectbox"] [data-baseweb="select"] {
         max-width: 400px !important;
         margin: 0 auto !important;
+        border-color: #175cad !important; /* Optional: outlines the box in your blue theme */
     }
 
     /* CENTER AND UPCASE THE MAIN PUNTERMATIC HEADER IN #175cad */
@@ -38,8 +47,8 @@ st.markdown("""
         font-size: 48px !important;
         font-weight: 900 !important;
         color: #175cad !important; 
-        text-transform: uppercase !important; /* Forces UPPERCASE */
-        text-align: center !important;        /* Centers text */
+        text-transform: uppercase !important; 
+        text-align: center !important;        
         margin-top: -30px !important;
         margin-bottom: 10px !important;
         padding-top: 0px !important;
@@ -50,7 +59,7 @@ st.markdown("""
         font-size: 32px !important; 
         font-weight: 800 !important;
         color: #175cad !important; 
-        text-align: center !important;        /* Centers text */
+        text-align: center !important;        
         margin-top: 15px !important;
         margin-bottom: 15px !important;
     }
@@ -141,8 +150,8 @@ else:
     # 1. UPPERCASE & Centered Main Title
     st.markdown(f'<h1 class="main-title">PUNTERMATIC</h1>', unsafe_allow_html=True)
     
-    # 2. Centered Selection Box with Blue Title Label
-    selected_race = st.selectbox("Select a Race", race_list, key="race_selector_centered")
+    # 2. Centered Selection Box with Matching Blue Typography Layout
+    selected_race = st.selectbox("Select a Race", race_list, key="race_selector_centered_v4")
 
     # 3. Centered Race Number (e.g., R1) in Blue
     st.markdown(f'<h2 class="sub-title">{selected_race}</h2>', unsafe_allow_html=True)
@@ -182,8 +191,6 @@ else:
             
         rating_display = str(rating).strip() if str(rating).strip() != "" else "N/A"
         
-        # Using a standard color flag inside markdown—the custom global CSS block 
-        # intercepts this color profile perfectly and transforms it into bright yellow!
         expander_title = f"{horse_name}  |  Rating: :red[{rating_display}]"
         
         with st.expander(expander_title, expanded=False):
