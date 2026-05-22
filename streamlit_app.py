@@ -7,7 +7,7 @@ st.set_page_config(page_title="Puntermatic", page_icon="🏇", layout="wide")
 # 2. INJECT CUSTOM STREAMLIT APP OVERRIDES
 st.markdown("""
     <style>
-    /* Force main app background color */
+    /* Force main app background color (Light slate gray look) */
     .stApp {
         background-color: #F3F4F6;
     }
@@ -27,11 +27,11 @@ st.markdown("""
         margin-bottom: 5px !important;
     }
     
-    /* MATCH DROPDOWN MENU TEXT SIZE, WEIGHT, AND COLOR TO THE LABEL */
+    /* ENFORCE DROPDOWN MENU TEXT COLOR AND SIZE (FIXES image_2.png issue) */
     div[data-testid="stSelectbox"] [data-baseweb="select"] div {
         font-size: 20px !important;
         font-weight: 800 !important;
-        color: #175cad !important;
+        color: #175cad !important; /* MATCHES SELECT A RACE COLOR */
         text-align: center !important;
     }
 
@@ -39,7 +39,6 @@ st.markdown("""
     div[data-testid="stSelectbox"] [data-baseweb="select"] {
         max-width: 400px !important;
         margin: 0 auto !important;
-        border-color: #175cad !important; /* Optional: outlines the box in your blue theme */
     }
 
     /* CENTER AND UPCASE THE MAIN PUNTERMATIC HEADER IN #175cad */
@@ -66,38 +65,35 @@ st.markdown("""
 
     /* OVERHAUL HORSE PANELS: BACKGROUND #175cad */
     div[data-testid="stExpander"] {
-        background-color: #175cad !important;
+        background-color: #175cad !important; /* Horse background color restored */
         border-radius: 6px !important;
         border: none !important;
         box-shadow: none !important;
         margin-bottom: 6px !important; 
         padding: 0px !important;
+        overflow: visible !important;
     }
 
-    /* Style the text rows inside the clickable horse panel bar */
+    /* HIDE the default plain text Streamlit expander summary row entirely */
+    div[data-testid="stExpander"] details summary span {
+        display: none !important;
+    }
+
+    /* Style the clickable AREA (the underlying trigger bar) */
     div[data-testid="stExpander"] details summary {
         padding: 12px 15px !important;
-    }
-
-    /* Make the horse name portion bold and clean white */
-    div[data-testid="stExpander"] details summary span p {
-        font-size: 19px !important;
-        font-weight: 800 !important; 
-        color: #FFFFFF !important;   
+        display: flex !important;
+        align-items: center !important;
+        justify-content: space-between !important;
     }
     
-    /* BULLETPROOF YELLOW RULE: Force the inner colored span to be bright yellow */
-    div[data-testid="stExpander"] details summary p span {
-        color: #FFFF00 !important;
-    }
-
     /* Make the interactive expansion arrow white to match the theme */
     div[data-testid="stExpander"] details summary svg {
         fill: #FFFFFF !important;
         color: #FFFFFF !important;
     }
 
-    /* Expander Inner Content Container */
+    /* Expander Inner Content Container (The white block that opens) */
     div[data-testid="stExpander"] details div[data-testid="stVerticalBlock"] {
         background-color: #FFFFFF !important; 
         padding: 15px !important;
@@ -191,9 +187,29 @@ else:
             
         rating_display = str(rating).strip() if str(rating).strip() != "" else "N/A"
         
-        expander_title = f"{horse_name}  |  Rating: :red[{rating_display}]"
+        # Unique tracking key to fix the expansion toggle drop bug completely
+        unique_key = f"panel_{selected_race}_{horse_name.replace(' ', '_')}"
         
-        with st.expander(expander_title, expanded=False):
+        # FIXED: Expander now only acts as the opening TRIGGER for the internal history.
+        # It's actual plain-text title parameter is blank to prevent code leak (image_1.png).
+        with st.expander("", expanded=False):
+            
+            # THE FIX: Bypassing st.expander restrictions by injecting custom HEADER HTML inside the panel!
+            # This absolute-positioned block recreates the blue header row and places the styled text perfectly.
+            st.markdown(f"""
+                <div style="
+                    position: absolute;
+                    top: -42px;
+                    left: 45px;
+                    pointer-events: none;
+                    z-index: 999;
+                    font-family: 'Segoe UI', Arial, sans-serif;
+                ">
+                    <span style="font-size: 19px; font-weight: 800; color: #FFFFFF;">{horse_name}</span>
+                    <span style="font-size: 19px; font-weight: 800; color: #FFFFFF;"> &nbsp;|&nbsp; Rating: </span>
+                    <span style="font-size: 19px; font-weight: 800; color: #FFFF00;">{rating_display}</span>
+                </div>
+            """, unsafe_allow_html=True)
             
             # Connection summary information row block
             st.markdown(f"""
