@@ -4,7 +4,7 @@ import requests
 # 1. FORCE THE WIDE LAYOUT FOR PERFECT CROSS-SCREEN ALIGNMENT
 st.set_page_config(page_title="Puntermatic", page_icon="🏇", layout="wide")
 
-# 2. INJECT CUSTOM GLOBAL THEMING (COLORS, FONTS, AND CARDS)
+# 2. INJECT CUSTOM STREAMLIT APP OVERRIDES (COLORS, FONTS, AND LAYOUT)
 st.markdown("""
     <style>
     /* Force main app background color (Light slate gray look) */
@@ -12,42 +12,92 @@ st.markdown("""
         background-color: #F3F4F6;
     }
     
-    /* Style all native dropdown selectors and basic text elements to use sharp fonts */
+    /* Global font enforcement */
     h1, h2, h3, p, label {
         font-family: 'Segoe UI', Arial, sans-serif !important;
+    }
+
+    /* 1. ENLARGE AND BOLD THE DROPDOWN HEADER LABEL */
+    div[data-testid="stSelectbox"] label p {
+        font-size: 20px !important;
+        font-weight: 800 !important;
         color: #1F2937 !important;
+        margin-bottom: 5px !important;
     }
     
-    /* Style your selection buttons */
-    div.stButton > button {
-        background-color: #1E3A8A !important;
-        color: white !important;
+    /* Tighten spacing around the select box container */
+    div[data-testid="stSelectbox"] {
+        margin-top: -20px !important;
+        margin-bottom: -10px !important;
+    }
+
+    /* 3. TIGHTEN HEADER MARGINS TO MOVE TEXT HIGHER UP THE SCREEN */
+    .main-title {
+        font-size: 46px !important;
+        font-weight: 900 !important;
+        color: #111827 !important;
+        margin-top: -50px !important;
+        margin-bottom: 0px !important;
+        padding-top: 0px !important;
+    }
+    
+    .sub-title {
+        font-size: 30px !important; /* 2 text sizes lower than main header */
+        font-weight: 800 !important;
+        color: #4B5563 !important;
+        margin-top: -10px !important;
+        margin-bottom: 10px !important;
+    }
+
+    /* 5. OVERHAUL HORSE PANELS: BACKGROUND #175cad, TEXT #FFFFFF, REMOVE SHADOWS */
+    div[data-testid="stExpander"] {
+        background-color: #175cad !important;
         border-radius: 6px !important;
         border: none !important;
+        box-shadow: none !important;
+        margin-bottom: 6px !important; /* Move horse panels closer together/higher up */
+        padding: 0px !important;
     }
 
-    /* TRANSFORM EXPANDERS: Make them look like premium white cards */
-    div[data-testid="stExpander"] {
-        background-color: #FFFFFF !important;
-        border-radius: 10px !important;
-        border: none !important;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.05) !important;
-        margin-bottom: 15px !important;
-        border-left: 6px solid #1E3A8A !important; /* Premium navy-blue left accent strip */
-    }
-
-    /* Style the clickable text header inside the expander bar */
+    /* Style the text inside the clickable horse panel bar */
     div[data-testid="stExpander"] details summary {
-        font-size: 18px !important;
-        font-weight: 700 !important;
-        color: #111827 !important;
-        padding: 10px 5px !important;
+        padding: 10px 15px !important;
+    }
+    
+    /* 4. FORCE HORSE PANEL NAME AND NUMBER TO BE BOLD AND WHITE */
+    div[data-testid="stExpander"] details summary span p {
+        font-size: 19px !important;
+        font-weight: 800 !important; /* Bold */
+        color: #FFFFFF !important;   /* White Text */
+    }
+    
+    /* Make the interactive expansion arrow white to match the theme */
+    div[data-testid="stExpander"] details summary svg {
+        fill: #FFFFFF !important;
+        color: #FFFFFF !important;
     }
 
-    /* Style the historical table container to blend with the card */
+    /* Expander Inner Content Container */
+    div[data-testid="stExpander"] details div[data-testid="stVerticalBlock"] {
+        background-color: #FFFFFF !important; /* Keeps internal history grid white */
+        padding: 15px !important;
+        border-bottom-left-radius: 6px;
+        border-bottom-right-radius: 6px;
+    }
+
+    /* 6. ENFORCE HORIZONTAL SCROLLING FOR PREVIOUS STARTS HISTORY TABLE */
     div.stTable {
         background-color: #FFFFFF !important;
-        margin-top: 10px;
+        margin-top: 5px;
+        overflow-x: auto !important; /* Enables horizontal swipe scrolling */
+        display: block !important;
+        width: 100% !important;
+    }
+    
+    /* Subtle divider line adjustment */
+    hr {
+        margin-top: 5px !important;
+        margin-bottom: 15px !important;
     }
     </style>
 """, unsafe_allow_html=True)
@@ -57,7 +107,7 @@ st.markdown("""
 # ==============================================================================
 FIREBASE_DB_URL = st.secrets["FIREBASE_URL"] + "races.json"
 
-@st.cache_data(ttl=10)  # Refresh data every 10 seconds automatically
+@st.cache_data(ttl=10)
 def fetch_race_data():
     try:
         response = requests.get(FIREBASE_DB_URL)
@@ -67,29 +117,26 @@ def fetch_race_data():
         return None
     return None
 
-# Fetch data from your cloud bridge
 all_races = fetch_race_data()
 
 if not all_races:
-    st.error("Unable to connect to Firebase. Please check your network or database URL.")
+    st.error("Unable to connect to Firebase database URL.")
 else:
-    # Create a clean tab or dropdown selector for Races R1 to R10
+    # Render Selection box with enhanced label header
     race_list = sorted(list(all_races.keys()))
     selected_race = st.selectbox("Select a Race", race_list)
 
-    st.title(f"🏇 Puntermatic - {selected_race}")
+    # 2 & 3. REMOVED DASH AND SEPARATED HEADERS INTO TYPOGRAPHY LAYOUT HIERARCHY
+    st.markdown(f'<h1 class="main-title">Puntermatic</h1>', unsafe_allow_html=True)
+    st.markdown(f'<h2 class="sub-title">{selected_race}</h2>', unsafe_allow_html=True)
     st.write("---")
 
-    # Get the horse records for the selected race sheet
     horses_data = all_races[selected_race]
 
-    # ==============================================================================
-    # DEEP HUNT SORTING: Checks all database variations to find the number
-    # ==============================================================================
+    # Deep ranking sort mechanism
     def get_rating_value(item):
         try:
             details = item[1]
-            # Look inside every key variation we've used across edits
             val = details.get("Live Rating", details.get("Live_Rating", details.get("LiveRating", 0)))
             if val is None or str(val).strip() == "" or str(val).strip().upper() == "N/A":
                 return 0.0
@@ -97,18 +144,15 @@ else:
         except (ValueError, TypeError):
             return 0.0
 
-    # Sort the horses: highest rating goes to the top
     sorted_horses = sorted(horses_data.items(), key=get_rating_value, reverse=True)
 
-    # Loop through each horse block in sorted order
+    # Render sorted runners list
     for horse_name, horse_details in sorted_horses:
         
-        # Pull values using deep fallbacks to ensure nothing stays blank
         jockey = horse_details.get("Today's Jockey Value", horse_details.get("Todays_Jockey_Value", ""))
         trainer = horse_details.get("Today's Trainer Value", horse_details.get("Todays_Trainer_Value", ""))
         rating = horse_details.get("Live Rating", horse_details.get("Live_Rating", "N/A"))
         
-        # Clean up empty strings or zero entries dynamically
         if str(jockey).strip() in ["", "None", "0", "0.0"]:
             jockey_display = "Unrated"
         else:
@@ -121,13 +165,12 @@ else:
             
         rating_display = str(rating).strip() if str(rating).strip() != "" else "N/A"
         
-        # 2. Native text string title for the clean dropdown button style
-        expander_title = f"🏇 {horse_name} | Rating: {rating_display}"
+        # 2 & 4. DELETED HORSE EMOJI & CREATED CLEAN TEXT HEADER STRING FOR INTENSE BOLDING
+        expander_title = f"{horse_name}  |  Rating: {rating_display}"
         
-        # 3. Open/Close dropdown capability with hidden categories inside
         with st.expander(expander_title, expanded=False):
             
-            # Put Today's Jockey and Trainer inside a dedicated shaded row bar
+            # Connection summary information row block
             st.markdown(f"""
                 <div style="
                     background-color: #F8F9FA; 
@@ -135,7 +178,7 @@ else:
                     border-radius: 6px; 
                     margin-top: 5px; 
                     margin-bottom: 15px; 
-                    border-left: 4px solid #1E3A8A;
+                    border-left: 4px solid #175cad;
                 ">
                     <p style="font-size: 15px; color: #4B5563; margin: 0; font-family: 'Segoe UI', Arial, sans-serif;">
                         <strong style="color: #1F2937;">Today's Jockey:</strong> {jockey_display} &nbsp;|&nbsp; 
@@ -144,11 +187,9 @@ else:
                 </div>
             """, unsafe_allow_html=True)
             
-            # Extract previous starts history sub-tree
             prev_starts = horse_details.get("Previous_Starts", {})
             
             if prev_starts:
-                # Reconstruct the nested history dictionary into a clean list for presentation
                 history_table = []
                 for start_id in sorted(prev_starts.keys()):
                     start_data = prev_starts[start_id]
@@ -161,7 +202,7 @@ else:
                         "Track": start_data.get("Track_Status", "")
                     })
                 
-                # Display the data grid inside the open dropdown container cleanly
+                # Rendered with implicit scroll wrapper defined in CSS toolkit above
                 st.table(history_table)
             else:
                 st.caption("No previous starts data available for this runner.")
