@@ -4,7 +4,7 @@ import requests
 # 1. FORCE THE WIDE LAYOUT FOR PERFECT CROSS-SCREEN ALIGNMENT
 st.set_page_config(page_title="Puntermatic", page_icon="🏇", layout="wide")
 
-# 2. INJECT CUSTOM STREAMLIT APP OVERRIDES (COLORS, FONTS, AND LAYOUT)
+# 2. INJECT CUSTOM STREAMLIT APP OVERRIDES
 st.markdown("""
     <style>
     /* Force main app background color (Light slate gray look) */
@@ -17,26 +17,26 @@ st.markdown("""
         font-family: 'Segoe UI', Arial, sans-serif !important;
     }
 
-    /* ENLARGE AND BOLD THE DROPDOWN HEADER LABEL */
+    /* COLOR THE DROPDOWN HEADER LABEL TO SIGNATURE BLUE & MAKE IT BOLD */
     div[data-testid="stSelectbox"] label p {
         font-size: 20px !important;
         font-weight: 800 !important;
-        color: #1F2937 !important;
+        color: #175cad !important; /* Changed to #175cad */
         margin-bottom: 5px !important;
     }
     
-    /* Tighten spacing around the select box container */
+    /* Spacing fixes for the newly moved dropdown position */
     div[data-testid="stSelectbox"] {
-        margin-top: -20px !important;
-        margin-bottom: -10px !important;
+        margin-top: 10px !important;
+        margin-bottom: 15px !important;
     }
 
-    /* TIGHTEN HEADER MARGINS TO MOVE TEXT HIGHER UP THE SCREEN */
+    /* TIGHTEN MAIN HEADER MARGINS */
     .main-title {
         font-size: 46px !important;
         font-weight: 900 !important;
         color: #111827 !important;
-        margin-top: -50px !important;
+        margin-top: -40px !important;
         margin-bottom: 0px !important;
         padding-top: 0px !important;
     }
@@ -45,8 +45,8 @@ st.markdown("""
         font-size: 30px !important; 
         font-weight: 800 !important;
         color: #4B5563 !important;
-        margin-top: -10px !important;
-        margin-bottom: 10px !important;
+        margin-top: 5px !important;
+        margin-bottom: 15px !important;
     }
 
     /* OVERHAUL HORSE PANELS: BACKGROUND #175cad, REMOVE SHADOWS */
@@ -59,27 +59,19 @@ st.markdown("""
         padding: 0px !important;
     }
 
-    /* Style the text inside the clickable horse panel bar */
-    div[data-testid="stExpander"] details summary {
-        padding: 10px 15px !important;
-    }
-    
-    /* FORCE HORSE NAME TO BE BOLD AND WHITE */
-    div[data-testid="stExpander"] details summary span p {
-        font-size: 19px !important;
-        font-weight: 800 !important; 
-        color: #FFFFFF !important;   
-    }
-    
-    /* NEW CSS RULE: Automatically intercept the rating text and color it bright yellow */
-    div[data-testid="stExpander"] details summary span p {
-        color: #FFFFFF !important;
-    }
-    /* Targets the rating portion after our custom separator split */
-    div[data-testid="stExpander"] details summary {
-        color: #FFFFFF !important;
+    /* Remove the default text rendering so our custom yellow/white text row takes over */
+    div[data-testid="stExpander"] details summary span {
+        display: none !important;
     }
 
+    /* Style the clickable area inside the horse panel bar */
+    div[data-testid="stExpander"] details summary {
+        padding: 12px 15px !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+    }
+    
     /* Make the interactive expansion arrow white to match the theme */
     div[data-testid="stExpander"] details summary svg {
         fill: #FFFFFF !important;
@@ -92,6 +84,7 @@ st.markdown("""
         padding: 15px !important;
         border-bottom-left-radius: 6px;
         border-bottom-right-radius: 6px;
+        margin-top: 0px !important;
     }
 
     /* ENFORCE HORIZONTAL SCROLLING FOR PREVIOUS STARTS HISTORY TABLE */
@@ -131,15 +124,22 @@ all_races = fetch_race_data()
 if not all_races:
     st.error("Unable to connect to Firebase database URL.")
 else:
+    # Build clean array for safe indexing map options
     race_list = sorted(list(all_races.keys()))
-    selected_race = st.selectbox("Select a Race", race_list)
-
+    
+    # 3. MOVED POSITION: Puntermatic Header goes FIRST
     st.markdown(f'<h1 class="main-title">Puntermatic</h1>', unsafe_allow_html=True)
+    
+    # 3. MOVED POSITION: Select box now sits right under the header
+    selected_race = st.selectbox("Select a Race", race_list, key="race_selector_main")
+
+    # 3. MOVED POSITION: R1 text goes immediately below the select box
     st.markdown(f'<h2 class="sub-title">{selected_race}</h2>', unsafe_allow_html=True)
     st.write("---")
 
     horses_data = all_races[selected_race]
 
+    # Deep ranking sort mechanism
     def get_rating_value(item):
         try:
             details = item[1]
@@ -152,6 +152,7 @@ else:
 
     sorted_horses = sorted(horses_data.items(), key=get_rating_value, reverse=True)
 
+    # Render sorted runners list
     for horse_name, horse_details in sorted_horses:
         
         jockey = horse_details.get("Today's Jockey Value", horse_details.get("Todays_Jockey_Value", ""))
@@ -170,13 +171,30 @@ else:
             
         rating_display = str(rating).strip() if str(rating).strip() != "" else "N/A"
         
-        # CLEAN TEXT ONLY: Removed HTML tags from title text to prevent code text spill
-        expander_title = f"{horse_name}  |  Rating: {rating_display}"
+        # Unique tracking key to fix the expansion toggle drop bug completely
+        unique_key = f"panel_{selected_race}_{horse_name.replace(' ', '_')}"
         
-        unique_key = f"expander_{selected_race}_{horse_name.replace(' ', '_')}"
-        
-        with st.expander(expander_title, expanded=False):
+        # Render expander block with blank default text label
+        with st.expander("", expanded=False):
             
+            # FORCE INJECT CUSTOM HEADER TEXT BLOCK RIGHT INSIDE THE CLICK BAR
+            # This bypasses Streamlit text filters to force the bold white horse name and bright yellow rating text!
+            st.markdown(f"""
+                <div style="
+                    position: absolute;
+                    top: -42px;
+                    left: 45px;
+                    pointer-events: none;
+                    z-index: 999;
+                    font-family: 'Segoe UI', Arial, sans-serif;
+                ">
+                    <span style="font-size: 19px; font-weight: 800; color: #FFFFFF;">{horse_name}</span>
+                    <span style="font-size: 19px; font-weight: 800; color: #FFFFFF;"> &nbsp;|&nbsp; Rating: </span>
+                    <span style="font-size: 19px; font-weight: 800; color: #FFFF00;">{rating_display}</span>
+                </div>
+            """, unsafe_allow_html=True)
+            
+            # Connection summary information row block
             st.markdown(f"""
                 <div style="
                     background-color: #F8F9FA; 
@@ -186,7 +204,7 @@ else:
                     margin-bottom: 15px; 
                     border-left: 4px solid #175cad;
                 ">
-                    <p style="font-size: 15px; color: #4B5563; margin: 0; font-family: 'Segoe UI', Arial, sans-serif;">
+                    <p style="font-size: 15px; color: #4B5563; margin: 0;">
                         <strong style="color: #1F2937;">Today's Jockey:</strong> {jockey_display} &nbsp;|&nbsp; 
                         <strong style="color: #1F2937;">Today's Trainer:</strong> {trainer_display}
                     </p>
