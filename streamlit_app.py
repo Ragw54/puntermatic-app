@@ -4,7 +4,7 @@ import requests
 # 1. FORCE THE WIDE LAYOUT FOR PERFECT CROSS-SCREEN ALIGNMENT
 st.set_page_config(page_title="Puntermatic", page_icon="🏇", layout="wide")
 
-# 2. INJECT CLEAN GLOBAL OVERRIDES (NO ABSOLUTE POSITIONING)
+# 2. INJECT CUSTOM STREAMLIT APP OVERRIDES
 st.markdown("""
     <style>
     /* Force main app background color */
@@ -17,39 +17,45 @@ st.markdown("""
         font-family: 'Segoe UI', Arial, sans-serif !important;
     }
 
-    /* COLOR THE DROPDOWN HEADER LABEL TO SIGNATURE BLUE & MAKE IT BOLD */
+    /* CENTER & COLOR THE DROPDOWN LABEL TO SIGNATURE BLUE */
     div[data-testid="stSelectbox"] label p {
         font-size: 20px !important;
         font-weight: 800 !important;
         color: #175cad !important; 
+        text-align: center !important;
+        display: block !important;
         margin-bottom: 5px !important;
     }
     
-    /* Perfect spacing for the moved dropdown position */
-    div[data-testid="stSelectbox"] {
-        margin-top: 5px !important;
-        margin-bottom: 5px !important;
+    /* Align select box input box to the center column design */
+    div[data-testid="stSelectbox"] [data-baseweb="select"] {
+        max-width: 400px !important;
+        margin: 0 auto !important;
     }
 
-    /* TIGHTEN MAIN HEADER MARGINS */
+    /* CENTER AND UPCASE THE MAIN PUNTERMATIC HEADER IN #175cad */
     .main-title {
-        font-size: 46px !important;
+        font-size: 48px !important;
         font-weight: 900 !important;
-        color: #111827 !important;
-        margin-top: -40px !important;
-        margin-bottom: 0px !important;
+        color: #175cad !important; 
+        text-transform: uppercase !important; /* Forces UPPERCASE */
+        text-align: center !important;        /* Centers text */
+        margin-top: -30px !important;
+        margin-bottom: 10px !important;
         padding-top: 0px !important;
     }
     
+    /* CENTER AND COLOR THE SUB-TITLE TO #175cad */
     .sub-title {
-        font-size: 30px !important; 
+        font-size: 32px !important; 
         font-weight: 800 !important;
-        color: #4B5563 !important;
-        margin-top: 5px !important;
+        color: #175cad !important; 
+        text-align: center !important;        /* Centers text */
+        margin-top: 15px !important;
         margin-bottom: 15px !important;
     }
 
-    /* OVERHAUL HORSE PANELS: BACKGROUND #175cad, REMOVE SHADOWS */
+    /* OVERHAUL HORSE PANELS: BACKGROUND #175cad */
     div[data-testid="stExpander"] {
         background-color: #175cad !important;
         border-radius: 6px !important;
@@ -59,7 +65,7 @@ st.markdown("""
         padding: 0px !important;
     }
 
-    /* Restore and style the clickable native header text */
+    /* Style the text rows inside the clickable horse panel bar */
     div[data-testid="stExpander"] details summary {
         padding: 12px 15px !important;
     }
@@ -71,10 +77,8 @@ st.markdown("""
         color: #FFFFFF !important;   
     }
     
-    /* TARGET EVERY RED TEXT VALUE INSIDE THE EXPANDER SUMMARY AND FORCE IT YELLOW */
-    /* Markdown colored strings render as HTML color elements behind the scenes */
-    div[data-testid="stExpander"] details summary span p span[style*="color: red"],
-    div[data-testid="stExpander"] details summary span p color[color="red"] {
+    /* BULLETPROOF YELLOW RULE: Force the inner colored span to be bright yellow */
+    div[data-testid="stExpander"] details summary p span {
         color: #FFFF00 !important;
     }
 
@@ -102,10 +106,12 @@ st.markdown("""
         width: 100% !important;
     }
     
-    /* Subtle divider line adjustment */
+    /* Centered horizontal divider line layout */
     hr {
-        margin-top: 5px !important;
-        margin-bottom: 15px !important;
+        max-width: 600px !important;
+        margin: 10px auto 20px auto !important;
+        border-color: #175cad !important;
+        opacity: 0.3;
     }
     </style>
 """, unsafe_allow_html=True)
@@ -132,13 +138,13 @@ if not all_races:
 else:
     race_list = sorted(list(all_races.keys()))
     
-    # 1. Puntermatic Title at the absolute top
-    st.markdown(f'<h1 class="main-title">Puntermatic</h1>', unsafe_allow_html=True)
+    # 1. UPPERCASE & Centered Main Title
+    st.markdown(f'<h1 class="main-title">PUNTERMATIC</h1>', unsafe_allow_html=True)
     
-    # 2. Select box colored blue sitting in between the text headers
-    selected_race = st.selectbox("Select a Race", race_list, key="race_selector_v3")
+    # 2. Centered Selection Box with Blue Title Label
+    selected_race = st.selectbox("Select a Race", race_list, key="race_selector_centered")
 
-    # 3. R1 header sitting two text sizes lower
+    # 3. Centered Race Number (e.g., R1) in Blue
     st.markdown(f'<h2 class="sub-title">{selected_race}</h2>', unsafe_allow_html=True)
     st.write("---")
 
@@ -176,9 +182,8 @@ else:
             
         rating_display = str(rating).strip() if str(rating).strip() != "" else "N/A"
         
-        # FIX STAINED TEXT TAGS: We pass a clear Markdown text string to the title parameter.
-        # We flag the rating value with a standard ":red[]" markdown wrapper. 
-        # Our custom CSS block intercepting from the top swaps that red tag into bright bright yellow!
+        # Using a standard color flag inside markdown—the custom global CSS block 
+        # intercepts this color profile perfectly and transforms it into bright yellow!
         expander_title = f"{horse_name}  |  Rating: :red[{rating_display}]"
         
         with st.expander(expander_title, expanded=False):
