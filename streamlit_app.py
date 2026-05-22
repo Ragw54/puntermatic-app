@@ -4,10 +4,10 @@ import requests
 # 1. FORCE THE WIDE LAYOUT FOR PERFECT CROSS-SCREEN ALIGNMENT
 st.set_page_config(page_title="Puntermatic", page_icon="🏇", layout="wide")
 
-# 2. INJECT CUSTOM STREAMLIT APP OVERRIDES
+# 2. INJECT BULLETPROOF LAYOUT OVERRIDES (NO ABSOLUTE OFFSETS)
 st.markdown("""
     <style>
-    /* Force main app background color (Light slate gray look) */
+    /* Force main app background color */
     .stApp {
         background-color: #F3F4F6;
     }
@@ -27,15 +27,15 @@ st.markdown("""
         margin-bottom: 5px !important;
     }
     
-    /* ENFORCE DROPDOWN MENU TEXT COLOR AND SIZE (FIXES image_2.png issue) */
+    /* ENFORCE DROPDOWN MENU TEXT COLOR AND SIZE */
     div[data-testid="stSelectbox"] [data-baseweb="select"] div {
         font-size: 20px !important;
         font-weight: 800 !important;
-        color: #175cad !important; /* MATCHES SELECT A RACE COLOR */
+        color: #175cad !important; 
         text-align: center !important;
     }
 
-    /* Align select box container to the center column design */
+    /* Center align select box box design width */
     div[data-testid="stSelectbox"] [data-baseweb="select"] {
         max-width: 400px !important;
         margin: 0 auto !important;
@@ -65,32 +65,32 @@ st.markdown("""
 
     /* OVERHAUL HORSE PANELS: BACKGROUND #175cad */
     div[data-testid="stExpander"] {
-        background-color: #175cad !important; /* Horse background color restored */
+        background-color: #175cad !important; 
         border-radius: 6px !important;
         border: none !important;
         box-shadow: none !important;
-        margin-bottom: 6px !important; 
+        margin-bottom: 8px !important; 
         padding: 0px !important;
-        overflow: visible !important;
     }
 
-    /* HIDE the default plain text Streamlit expander summary row entirely */
+    /* Completely suppress native text rendering inside the summary block */
     div[data-testid="stExpander"] details summary span {
         display: none !important;
     }
 
-    /* Style the clickable AREA (the underlying trigger bar) */
+    /* Reformat the summary area to behave as an auto-sizing flex box container */
     div[data-testid="stExpander"] details summary {
-        padding: 12px 15px !important;
+        padding: 0px !important; /* Managed by internal block padding now */
         display: flex !important;
         align-items: center !important;
-        justify-content: space-between !important;
     }
     
-    /* Make the interactive expansion arrow white to match the theme */
+    /* Style the native disclosure icon wrapper to keep it clean and white */
     div[data-testid="stExpander"] details summary svg {
         fill: #FFFFFF !important;
         color: #FFFFFF !important;
+        margin-left: 15px !important;
+        margin-right: -5px !important;
     }
 
     /* Expander Inner Content Container (The white block that opens) */
@@ -143,13 +143,13 @@ if not all_races:
 else:
     race_list = sorted(list(all_races.keys()))
     
-    # 1. UPPERCASE & Centered Main Title
+    # 1. MAIN TITLE
     st.markdown(f'<h1 class="main-title">PUNTERMATIC</h1>', unsafe_allow_html=True)
     
-    # 2. Centered Selection Box with Matching Blue Typography Layout
-    selected_race = st.selectbox("Select a Race", race_list, key="race_selector_centered_v4")
+    # 2. SELECTION DROPDOWN MENU
+    selected_race = st.selectbox("Select a Race", race_list, key="race_selector_v5")
 
-    # 3. Centered Race Number (e.g., R1) in Blue
+    # 3. SUB-TITLE HEADER
     st.markdown(f'<h2 class="sub-title">{selected_race}</h2>', unsafe_allow_html=True)
     st.write("---")
 
@@ -187,29 +187,26 @@ else:
             
         rating_display = str(rating).strip() if str(rating).strip() != "" else "N/A"
         
-        # Unique tracking key to fix the expansion toggle drop bug completely
-        unique_key = f"panel_{selected_race}_{horse_name.replace(' ', '_')}"
+        # FIXED: Using a clean, inline HTML Flex-Row layout block inside the title setup.
+        # This replaces absolute pixels with relative flex boxes, locking the text perfectly inside the panel!
+        custom_header_html = f"""
+            <div style="
+                width: 100%; 
+                padding: 12px 15px 12px 5px; 
+                display: flex; 
+                justify-content: space-between; 
+                align-items: center;
+                font-family: 'Segoe UI', Arial, sans-serif;
+            ">
+                <span style="font-size: 19px; font-weight: 800; color: #FFFFFF;">{horse_name}</span>
+                <span style="font-size: 19px; font-weight: 800; color: #FFFFFF;">
+                    Rating: <span style="color: #FFFF00 !important;">{rating_display}</span>
+                </span>
+            </div>
+        """
         
-        # FIXED: Expander now only acts as the opening TRIGGER for the internal history.
-        # It's actual plain-text title parameter is blank to prevent code leak (image_1.png).
-        with st.expander("", expanded=False):
-            
-            # THE FIX: Bypassing st.expander restrictions by injecting custom HEADER HTML inside the panel!
-            # This absolute-positioned block recreates the blue header row and places the styled text perfectly.
-            st.markdown(f"""
-                <div style="
-                    position: absolute;
-                    top: -42px;
-                    left: 45px;
-                    pointer-events: none;
-                    z-index: 999;
-                    font-family: 'Segoe UI', Arial, sans-serif;
-                ">
-                    <span style="font-size: 19px; font-weight: 800; color: #FFFFFF;">{horse_name}</span>
-                    <span style="font-size: 19px; font-weight: 800; color: #FFFFFF;"> &nbsp;|&nbsp; Rating: </span>
-                    <span style="font-size: 19px; font-weight: 800; color: #FFFF00;">{rating_display}</span>
-                </div>
-            """, unsafe_allow_html=True)
+        # We pass the custom structural layout row directly into the click header
+        with st.expander(custom_header_html, expanded=False):
             
             # Connection summary information row block
             st.markdown(f"""
