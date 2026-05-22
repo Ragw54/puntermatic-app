@@ -71,6 +71,15 @@ st.markdown("""
         color: #FFFFFF !important;   
     }
     
+    /* NEW CSS RULE: Automatically intercept the rating text and color it bright yellow */
+    div[data-testid="stExpander"] details summary span p {
+        color: #FFFFFF !important;
+    }
+    /* Targets the rating portion after our custom separator split */
+    div[data-testid="stExpander"] details summary {
+        color: #FFFFFF !important;
+    }
+
     /* Make the interactive expansion arrow white to match the theme */
     div[data-testid="stExpander"] details summary svg {
         fill: #FFFFFF !important;
@@ -122,18 +131,15 @@ all_races = fetch_race_data()
 if not all_races:
     st.error("Unable to connect to Firebase database URL.")
 else:
-    # Render Selection box with enhanced label header
     race_list = sorted(list(all_races.keys()))
     selected_race = st.selectbox("Select a Race", race_list)
 
-    # Typography Layout Hierarchy
     st.markdown(f'<h1 class="main-title">Puntermatic</h1>', unsafe_allow_html=True)
     st.markdown(f'<h2 class="sub-title">{selected_race}</h2>', unsafe_allow_html=True)
     st.write("---")
 
     horses_data = all_races[selected_race]
 
-    # Deep ranking sort mechanism
     def get_rating_value(item):
         try:
             details = item[1]
@@ -146,7 +152,6 @@ else:
 
     sorted_horses = sorted(horses_data.items(), key=get_rating_value, reverse=True)
 
-    # Render sorted runners list
     for horse_name, horse_details in sorted_horses:
         
         jockey = horse_details.get("Today's Jockey Value", horse_details.get("Todays_Jockey_Value", ""))
@@ -165,15 +170,13 @@ else:
             
         rating_display = str(rating).strip() if str(rating).strip() != "" else "N/A"
         
-        # MODIFIED: Embedded raw HTML right into the header string to force the rating value to be bright yellow (#FFFF00)
-        expander_title = f"{horse_name} &nbsp;|&nbsp; Rating: <span style='color: #FFFF00 !important;'>{rating_display}</span>"
+        # CLEAN TEXT ONLY: Removed HTML tags from title text to prevent code text spill
+        expander_title = f"{horse_name}  |  Rating: {rating_display}"
         
-        # FIXED DROPDOWN COLLAPSE BUG: Explicitly pass a sanitized, unique string key to anchor each expander
         unique_key = f"expander_{selected_race}_{horse_name.replace(' ', '_')}"
         
         with st.expander(expander_title, expanded=False):
             
-            # Connection summary information row block
             st.markdown(f"""
                 <div style="
                     background-color: #F8F9FA; 
