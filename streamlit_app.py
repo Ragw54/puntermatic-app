@@ -17,7 +17,7 @@ st.markdown("""
         font-family: 'Segoe UI', Arial, sans-serif !important;
     }
 
-    /* 1. ENLARGE AND BOLD THE DROPDOWN HEADER LABEL */
+    /* ENLARGE AND BOLD THE DROPDOWN HEADER LABEL */
     div[data-testid="stSelectbox"] label p {
         font-size: 20px !important;
         font-weight: 800 !important;
@@ -31,7 +31,7 @@ st.markdown("""
         margin-bottom: -10px !important;
     }
 
-    /* 3. TIGHTEN HEADER MARGINS TO MOVE TEXT HIGHER UP THE SCREEN */
+    /* TIGHTEN HEADER MARGINS TO MOVE TEXT HIGHER UP THE SCREEN */
     .main-title {
         font-size: 46px !important;
         font-weight: 900 !important;
@@ -42,20 +42,20 @@ st.markdown("""
     }
     
     .sub-title {
-        font-size: 30px !important; /* 2 text sizes lower than main header */
+        font-size: 30px !important; 
         font-weight: 800 !important;
         color: #4B5563 !important;
         margin-top: -10px !important;
         margin-bottom: 10px !important;
     }
 
-    /* 5. OVERHAUL HORSE PANELS: BACKGROUND #175cad, TEXT #FFFFFF, REMOVE SHADOWS */
+    /* OVERHAUL HORSE PANELS: BACKGROUND #175cad, REMOVE SHADOWS */
     div[data-testid="stExpander"] {
         background-color: #175cad !important;
         border-radius: 6px !important;
         border: none !important;
         box-shadow: none !important;
-        margin-bottom: 6px !important; /* Move horse panels closer together/higher up */
+        margin-bottom: 6px !important; 
         padding: 0px !important;
     }
 
@@ -64,11 +64,11 @@ st.markdown("""
         padding: 10px 15px !important;
     }
     
-    /* 4. FORCE HORSE PANEL NAME AND NUMBER TO BE BOLD AND WHITE */
+    /* FORCE HORSE NAME TO BE BOLD AND WHITE */
     div[data-testid="stExpander"] details summary span p {
         font-size: 19px !important;
-        font-weight: 800 !important; /* Bold */
-        color: #FFFFFF !important;   /* White Text */
+        font-weight: 800 !important; 
+        color: #FFFFFF !important;   
     }
     
     /* Make the interactive expansion arrow white to match the theme */
@@ -79,17 +79,17 @@ st.markdown("""
 
     /* Expander Inner Content Container */
     div[data-testid="stExpander"] details div[data-testid="stVerticalBlock"] {
-        background-color: #FFFFFF !important; /* Keeps internal history grid white */
+        background-color: #FFFFFF !important; 
         padding: 15px !important;
         border-bottom-left-radius: 6px;
         border-bottom-right-radius: 6px;
     }
 
-    /* 6. ENFORCE HORIZONTAL SCROLLING FOR PREVIOUS STARTS HISTORY TABLE */
+    /* ENFORCE HORIZONTAL SCROLLING FOR PREVIOUS STARTS HISTORY TABLE */
     div.stTable {
         background-color: #FFFFFF !important;
         margin-top: 5px;
-        overflow-x: auto !important; /* Enables horizontal swipe scrolling */
+        overflow-x: auto !important; 
         display: block !important;
         width: 100% !important;
     }
@@ -126,7 +126,7 @@ else:
     race_list = sorted(list(all_races.keys()))
     selected_race = st.selectbox("Select a Race", race_list)
 
-    # 2 & 3. REMOVED DASH AND SEPARATED HEADERS INTO TYPOGRAPHY LAYOUT HIERARCHY
+    # Typography Layout Hierarchy
     st.markdown(f'<h1 class="main-title">Puntermatic</h1>', unsafe_allow_html=True)
     st.markdown(f'<h2 class="sub-title">{selected_race}</h2>', unsafe_allow_html=True)
     st.write("---")
@@ -165,8 +165,11 @@ else:
             
         rating_display = str(rating).strip() if str(rating).strip() != "" else "N/A"
         
-        # 2 & 4. DELETED HORSE EMOJI & CREATED CLEAN TEXT HEADER STRING FOR INTENSE BOLDING
-        expander_title = f"{horse_name}  |  Rating: {rating_display}"
+        # MODIFIED: Embedded raw HTML right into the header string to force the rating value to be bright yellow (#FFFF00)
+        expander_title = f"{horse_name} &nbsp;|&nbsp; Rating: <span style='color: #FFFF00 !important;'>{rating_display}</span>"
+        
+        # FIXED DROPDOWN COLLAPSE BUG: Explicitly pass a sanitized, unique string key to anchor each expander
+        unique_key = f"expander_{selected_race}_{horse_name.replace(' ', '_')}"
         
         with st.expander(expander_title, expanded=False):
             
@@ -202,7 +205,6 @@ else:
                         "Track": start_data.get("Track_Status", "")
                     })
                 
-                # Rendered with implicit scroll wrapper defined in CSS toolkit above
                 st.table(history_table)
             else:
                 st.caption("No previous starts data available for this runner.")
