@@ -84,13 +84,13 @@ else:
     horses_data = all_races[selected_race]
 
     # ==============================================================================
-    # SORTING LOGIC: Flexible fallback to check both space and underscore headers
+    # DEEP HUNT SORTING: Checks all database variations to find the number
     # ==============================================================================
     def get_rating_value(item):
         try:
             details = item[1]
-            # Check 'Live Rating' (with space) first, then fall back to underscore version
-            val = details.get("Live Rating", details.get("Live_Rating", 0))
+            # Look inside every key variation we've used across edits
+            val = details.get("Live Rating", details.get("Live_Rating", details.get("LiveRating", 0)))
             if val is None or str(val).strip() == "" or str(val).strip().upper() == "N/A":
                 return 0.0
             return float(str(val).strip())
@@ -103,12 +103,12 @@ else:
     # Loop through each horse block in sorted order
     for horse_name, horse_details in sorted_horses:
         
-        # 1. Capture variables matching your exact space-separated Excel headers
+        # Pull values using deep fallbacks to ensure nothing stays blank
         jockey = horse_details.get("Today's Jockey Value", horse_details.get("Todays_Jockey_Value", ""))
         trainer = horse_details.get("Today's Trainer Value", horse_details.get("Todays_Trainer_Value", ""))
         rating = horse_details.get("Live Rating", horse_details.get("Live_Rating", "N/A"))
         
-        # Elegant zero-handling: Catch empty cells, text Nones, or literal zeros
+        # Clean up empty strings or zero entries dynamically
         if str(jockey).strip() in ["", "None", "0", "0.0"]:
             jockey_display = "Unrated"
         else:
@@ -118,9 +118,11 @@ else:
             trainer_display = "Unrated"
         else:
             trainer_display = trainer
+            
+        rating_display = str(rating).strip() if str(rating).strip() != "" else "N/A"
         
         # 2. Native text string title for the clean dropdown button style
-        expander_title = f"🏇 {horse_name} | Rating: {rating}"
+        expander_title = f"🏇 {horse_name} | Rating: {rating_display}"
         
         # 3. Open/Close dropdown capability with hidden categories inside
         with st.expander(expander_title, expanded=False):
