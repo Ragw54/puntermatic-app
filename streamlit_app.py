@@ -4,7 +4,38 @@ import requests
 # 1. FORCE THE WIDE LAYOUT FOR PERFECT CROSS-SCREEN ALIGNMENT
 st.set_page_config(page_title="Puntermatic", page_icon="🏇", layout="wide")
 
-# 2. INJECT BULLETPROOF DESIGN LAYOUT OVERRIDES (FIXES ALL COLOR DROPS & TEXT LEAKS)
+# ==============================================================================
+# PRIVATE ACCESS CONFIGURATION (ADMIN USER LOCK)
+# ==============================================================================
+ALLOWED_USERS = [
+    "your_email@domain.com"
+]
+
+# Initialize login tracking token states
+if "logged_in" not in st.session_state:
+    st.session_state.logged_in = False
+if "user_email" not in st.session_state:
+    st.session_state.user_email = ""
+
+# Web API function to securely verify credentials via Firebase REST Authentication
+def firebase_auth(email, password, action="signInWithPassword"):
+    API_KEY = st.secrets["FIREBASE_API_KEY"] 
+    url = f"https://identitytoolkit.googleapis.com/v1/accounts:{action}?key={API_KEY}"
+    
+    payload = {"email": email, "password": password, "returnSecureToken": True}
+    try:
+        response = requests.post(url, json=payload)
+        if response.status_code == 200:
+            return True, response.json()
+        else:
+            error_msg = response.json().get("error", {}).get("message", "Authentication Failed")
+            return False, error_msg
+    except Exception as e:
+        return False, str(e)
+
+# ==============================================================================
+# INJECT BULLETPROOF DESIGN LAYOUT OVERRIDES (GLOBAL APP STYLING)
+# ==============================================================================
 st.markdown("""
     <style>
     /* Force main app background color */
@@ -42,7 +73,7 @@ st.markdown("""
         border-color: #175cad !important;
     }
 
-    /* CENTER AND UPCASE THE MAIN PUNTERMATIC HEADER IN #175cad */
+    /* CHANGED: CENTER AND UPCASE THE NEW RACES HEADER IN #175cad */
     .main-title {
         font-size: 48px !important;
         font-weight: 900 !important;
@@ -84,7 +115,7 @@ st.markdown("""
         padding: 12px 15px !important;
     }
 
-    /* BRUTE-FORCE FIXED: Overrides Streamlit styles to force the entire title text row to remain visible, bold, and pure white */
+    /* Overrides Streamlit styles to force the entire title text row to remain visible, bold, and pure white */
     div[data-testid="stExpander"] details summary p,
     div[data-testid="stExpander"] details summary span,
     div[data-testid="stExpander"] details[open] summary p,
@@ -131,8 +162,71 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # ==============================================================================
-# DATABASE CONFIGURATION
+# DISPLAY AUTHENTICATION GATEKEEPER SCREEN
 # ==============================================================================
+if not st.session_state.logged_in:
+    st.markdown("<br><h1 style='text-align: center; color: #175cad;'>PUNTERMATIC DASHBOARD</h1>", unsafe_allow_html=True)
+    st.markdown("<p style='text-align: center; color: #4B5563;'>Secure Single-User Data Environment</p><br>", unsafe_allow_html=True)
+    
+    _, center_col, _ = st.columns([1, 2, 1])
+    
+    with center_col:
+        auth_tab, signup_tab = st.tabs(["🔒 Account Login", "📝 Register User"])
+        
+        with auth_tab:
+            st.write(" ")
+            login_email = st.text_input("Email Address", key="login_email_input").strip().lower()
+            login_password = st.text_input("Password", type="password", key="login_pass_input")
+            st.write(" ")
+            
+            if st.button("Log In", type="primary", use_container_width=True):
+                if login_email not in ALLOWED_USERS:
+                    st.error("Access Denied: This account is not authorized to access this dashboard.")
+                else:
+                    success, result = firebase_auth(login_email, login_password, "signInWithPassword")
+                    if success:
+                        st.session_state.logged_in = True
+                        st.session_state.user_email = login_email
+                        st.success("Access Granted! Loading your workspace...")
+                        st.rerun()
+                    else:
+                        st.error(f"Login Failed: {result.replace('_', ' ')}")
+                    
+        with signup_tab:
+            st.write(" ")
+            new_email = st.text_input("Enter Email Address", key="signup_email_input").strip().lower()
+            new_password = st.text_input("Create Password (Min 6 Characters)", type="password", key="signup_pass_input")
+            confirm_password = st.text_input("Confirm Password", type="password", key="signup_confirm_input")
+            st.write(" ")
+            
+            if st.button("Register Authorized Account", use_container_width=True):
+                if new_email not in ALLOWED_USERS:
+                    st.error("Registration Blocked: Email address is not on the authorized developer list.")
+                elif new_password != confirm_password:
+                    st.error("Passwords do not match!")
+                elif len(new_password) < 6:
+                    st.error("Password must be at least 6 characters long.")
+                else:
+                    success, result = firebase_auth(new_email, new_password, "signUp")
+                    if success:
+                        st.success("Account created successfully! You can now switch to the Login tab.")
+                    else:
+                        st.error(f"Registration Failed: {result.replace('_', ' ')}")
+
+    st.stop()
+
+# ==============================================================================
+# MAIN APPLICATION INTERFACE (RUNS ONLY IF ACCESS GRANTED)
+# ==============================================================================
+with st.sidebar:
+    st.write(f"Workspace Identity:")
+    st.code(st.session_state.user_email)
+    st.write(" ")
+    if st.button("Log Out of Dashboard", type="secondary", use_container_width=True):
+        st.session_state.logged_in = False
+        st.session_state.user_email = ""
+        st.rerun()
+
 FIREBASE_DB_URL = st.secrets["FIREBASE_URL"] + "races.json"
 
 @st.cache_data(ttl=10)
@@ -148,23 +242,20 @@ def fetch_race_data():
 all_races = fetch_race_data()
 
 if not all_races:
-    st.error("Unable to connect to Firebase database URL.")
+    st.error("Unable to connect to your Firebase database URL endpoint.")
 else:
     race_list = sorted(list(all_races.keys()))
     
-    # 1. MAIN PUNTERMATIC HEADER
-    st.markdown(f'<h1 class="main-title">PUNTERMATIC</h1>', unsafe_allow_html=True)
+    # CHANGED 1: Replaced PUNTERMATIC with RACES header in the identical style block
+    st.markdown(f'<h1 class="main-title">RACES</h1>', unsafe_allow_html=True)
     
-    # 2. SELECT BOX INSTANCE
-    selected_race = st.selectbox("Select a Race", race_list, key="race_selector_final_v2")
+    selected_race = st.selectbox("Select a Race", race_list, key="race_selector_final_v3")
 
-    # 3. SUB-TITLE HEADER
     st.markdown(f'<h2 class="sub-title">{selected_race}</h2>', unsafe_allow_html=True)
     st.write("---")
 
     horses_data = all_races[selected_race]
 
-    # Deep ranking sort mechanism
     def get_rating_value(item):
         try:
             details = item[1]
@@ -177,8 +268,12 @@ else:
 
     sorted_horses = sorted(horses_data.items(), key=get_rating_value, reverse=True)
 
-    # Render sorted runners list
     for horse_name, horse_details in sorted_horses:
+        
+        # Placeholders for future Name columns. When you map them in Python/Firebase later,
+        # replace these strings with horse_details.get("Jockey_Name", "TBA") etc.
+        jockey_name_display = horse_details.get("Jockey Name", "TBA") 
+        trainer_name_display = horse_details.get("Trainer Name", "TBA")
         
         jockey = horse_details.get("Today's Jockey Value", horse_details.get("Todays_Jockey_Value", ""))
         trainer = horse_details.get("Today's Trainer Value", horse_details.get("Todays_Trainer_Value", ""))
@@ -196,14 +291,10 @@ else:
             
         rating_display = str(rating).strip() if str(rating).strip() != "" else "N/A"
         
-        # FIXED: Plain text title to prevent any raw text tag leaks on screen.
-        # We target the 'Rating:' substring directly using a clean, native Streamlit sub-color block hack.
         expander_title = f"{horse_name}  |  Rating: :rainbow[{rating_display}]"
         
         with st.expander(expander_title, expanded=False):
             
-            # THE BULLETPROOF TEXT FIX: Injecting a hidden CSS rule right inside the container block.
-            # This locks onto the generated text spans above and forces the rating text bright yellow (#FFFF00)
             st.markdown(f"""
                 <style>
                 div[data-testid="stExpander"] details summary p span,
@@ -221,10 +312,13 @@ else:
                     margin-top: 5px; 
                     margin-bottom: 15px; 
                     border-left: 4px solid #175cad;
+                    line-height: 1.6;
                 ">
                     <p style="font-size: 15px; color: #4B5563; margin: 0;">
-                        <strong style="color: #1F2937;">Today's Jockey:</strong> {jockey_display} &nbsp;|&nbsp; 
-                        <strong style="color: #1F2937;">Today's Trainer:</strong> {trainer_display}
+                        <strong style="color: #1F2937;">Jockey:</strong> {jockey_name_display}<br>
+                        <strong style="color: #1F2937;">Trainer:</strong> {trainer_name_display}<br>
+                        <strong style="color: #1F2937;">Jockey Value:</strong> {jockey_display}<br>
+                        <strong style="color: #1F2937;">Trainer Value:</strong> {trainer_display}
                     </p>
                 </div>
             """, unsafe_allow_html=True)
@@ -246,4 +340,4 @@ else:
                 
                 st.table(history_table)
             else:
-                st.caption("No previous starts data available for this runner.")
+                st.caption("No historical run data files mapped for this selection.")
