@@ -8,7 +8,7 @@ st.set_page_config(page_title="Puntermatic", page_icon="🏇", layout="wide")
 # PRIVATE ACCESS CONFIGURATION (ADMIN USER LOCK)
 # ==============================================================================
 ALLOWED_USERS = [
-    "your_email@domain.com"
+    "ragw54@gmail.com"
 ]
 
 # Initialize login tracking token states
