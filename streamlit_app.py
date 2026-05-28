@@ -306,4 +306,4 @@ else:
                     })
                 st.table(history_table)
             else:
-                st.caption("No historical run data files mapped for this selection.")
+                st.caption("FIRST START No previous history for this selection.")
