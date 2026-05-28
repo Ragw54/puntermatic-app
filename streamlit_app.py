@@ -289,12 +289,14 @@ else:
                 </div>
             """, unsafe_allow_html=True)
             
+           
             prev_starts = horse_details.get("Previous_Starts", {})
             if prev_starts:
                 history_table = []
                 for start_id in sorted(prev_starts.keys()):
                     start_data = prev_starts[start_id]
                     history_table.append({
+                        "Date": start_data.get("Date", ""),    # Placed on the far left column line!
                         "Form": start_data.get("Form", ""),
                         "Dist": start_data.get("Distance", ""),
                         "Class": start_data.get("Class", ""),
