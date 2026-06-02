@@ -1,7 +1,14 @@
 import streamlit as st
 import requests
 import re
+import streamlit as st
 
+# Add a simple administrative button anywhere on your desktop layout
+if st.button("Reset & Force Clear Cache"):
+    st.cache_data.clear()
+    st.cache_resource.clear()
+    st.success("Cache completely wiped! Reloading fresh data...")
+    st.rerun()
 # 1. FORCE THE WIDE LAYOUT FOR PERFECT CROSS-SCREEN ALIGNMENT
 st.set_page_config(page_title="Puntermatic", page_icon="🏇", layout="wide")
 
