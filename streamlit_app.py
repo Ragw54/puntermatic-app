@@ -256,8 +256,8 @@ else:
         trainer_name = horse_details.get("Trainer", horse_details.get("Trainer Name", "TBA"))
         weight_val = horse_details.get("Weight", "N/A")
         
-        jockey_val = horse_details.get("Today's Jockey Value", horse_details.get("Todays_Jockey_Value", ""))
-        trainer_val = horse_details.get("Today's Trainer Value", horse_details.get("Todays_Trainer_Value", ""))
+        jockey_val = horse_details.get("Jockey Value", horse_details.get("Todays_Jockey_Value", ""))
+        trainer_val = horse_details.get("Trainer Value", horse_details.get("Todays_Trainer_Value", ""))
         rating = horse_details.get("Live Rating", horse_details.get("Live_Rating", "N/A"))
         
         jockey_val_display = "Unrated" if str(jockey_val).strip() in ["", "None", "0", "0.0"] else jockey_val
