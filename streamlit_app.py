@@ -33,7 +33,7 @@ st.markdown("""
     .punter-subtitle {
         font-size: 1.5rem !important;
         font-weight: 500 !important;
-        color: #2f1aab !important; /* Slate Gray */
+        color: #216bd1 !important; /* Slate Gray */
         margin-top: 0px !important;
     }
     
@@ -41,7 +41,7 @@ st.markdown("""
     h2, h3, .stSubheader {
         font-size: 1.8rem !important;
         font-weight: 700 !important;
-        color: #2f1aab !important;
+        color: #216bd1 !important;
     }
     
     /* Selectbox Label and Larger Selectbox Text */
