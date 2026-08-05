@@ -12,35 +12,35 @@ st.markdown("""
     <style>
     /* Main Titles and Section Headers */
     h1 {
-        font-size: 2.5rem !important;
+        font-size: 2.2rem !important;
         font-weight: 700 !important;
     }
     h2, h3, .stSubheader {
-        font-size: 1.8rem !important;
+        font-size: 1.6rem !important;
         font-weight: 600 !important;
     }
     
-    /* Category Labels & Slider Text */
+    /* ENLARGE SIDEBAR NAVIGATION PANE & RADIO BUTTONS */
+    section[data-testid="stSidebar"] {
+        width: 320px !important;
+    }
+    section[data-testid="stSidebar"] .stRadio label {
+        font-size: 1.35rem !important;
+        font-weight: 600 !important;
+        padding-top: 6px !important;
+        padding-bottom: 6px !important;
+    }
+    section[data-testid="stSidebar"] input[type="radio"] {
+        width: 22px !important;
+        height: 22px !important;
+        margin-right: 12px !important;
+        cursor: pointer;
+    }
+
+    /* Slider Labels & Inputs */
     .stSlider label, .stSelectbox label, .stTextInput label {
         font-size: 1.25rem !important;
         font-weight: 600 !important;
-    }
-    
-    /* Enlarge Radio buttons, Checkboxes & standard text labels */
-    div[data-baseweb="radio"] label, div[data-baseweb="checkbox"] label {
-        font-size: 1.2rem !important;
-        font-weight: 500 !important;
-    }
-    
-    /* Increase size of the actual visual radio/checkbox targets */
-    input[type="radio"], input[type="checkbox"] {
-        transform: scale(1.35);
-        margin-right: 8px !important;
-    }
-    
-    /* Sidebar Navigation Font Size */
-    .css-1d3318a, .stSidebar label {
-        font-size: 1.15rem !important;
     }
     </style>
 """, unsafe_allow_html=True)
@@ -78,9 +78,9 @@ selected_page = st.sidebar.radio("Select Application View", pages)
 # ------------------------------------------------------------------------------
 user_prof = os.environ.get("USERPROFILE", "")
 possible_paths = [
+    "Full_Puntermatic_Migration.json",
     os.path.join(user_prof, "OneDrive", "Desktop", "Full_Puntermatic_Migration.json"),
-    os.path.join(user_prof, "Desktop", "Full_Puntermatic_Migration.json"),
-    "Full_Puntermatic_Migration.json"
+    os.path.join(user_prof, "Desktop", "Full_Puntermatic_Migration.json")
 ]
 
 json_path = None
@@ -94,8 +94,8 @@ for p in possible_paths:
 # ------------------------------------------------------------------------------
 if selected_page == "📊 Live Race Fields & Ratings":
     if not json_path:
-        st.error("❌ Database file `Full_Puntermatic_Migration.json` was not found on your Desktop.")
-        st.info("Please open your terminal and run: `python migrate.py`")
+        st.error("❌ Database file `Full_Puntermatic_Migration.json` was not found.")
+        st.info("Please make sure `Full_Puntermatic_Migration.json` is uploaded to your GitHub repository.")
     else:
         try:
             with open(json_path, "r") as f:
@@ -109,61 +109,60 @@ if selected_page == "📊 Live Race Fields & Ratings":
                 selected_raw_key = st.selectbox("Select Race Sheet", raw_keys, format_func=lambda x: race_display_map[x])
                 
                 if selected_raw_key:
-                    race_horses = race_database[selected_raw_key]
-                    race_distance = "N/A"
-                    if race_horses and len(race_horses) > 0:
+                    race_horses = race_database.get(selected_raw_key, [])
+                    
+                    if not race_horses or len(race_horses) == 0:
+                        st.warning(f"No runners or form data found for {race_display_map[selected_raw_key]}.")
+                    else:
                         race_distance = race_horses[0].get("current_distance", race_horses[0].get("Current Distance", "N/A"))
-                    
-                    st.subheader(f"Field Overview: {race_display_map[selected_raw_key]}")
-                    st.markdown(f"**Current Race Distance: {race_distance}m**")
-                    st.write("---")
-                    
-                    calculated_field = []
-                    for horse in race_horses:
-                        h_name = horse.get("horse_name", horse.get("excel_name", "Unknown Horse"))
                         
-                        # Fallback keys to read safely whether structured via JSON or Firebase
-                        j_name = horse.get("jockey", horse.get("Jockey Name", horse.get("Jockey", "TBA")))
-                        t_name = horse.get("trainer", horse.get("Trainer Name", horse.get("Trainer", "TBA")))
+                        st.subheader(f"Field Overview: {race_display_map[selected_raw_key]}")
+                        st.markdown(f"**Current Race Distance: {race_distance}m**")
+                        st.write("---")
                         
-                        base_rat = float(horse.get("raw_total_rating", horse.get("Live Rating", horse.get("Rating", 0.0))))
-                        jv_val   = float(horse.get("raw_jockey_value", horse.get("Jockey Value", 0.0)))
-                        tv_val   = float(horse.get("raw_trainer_value", horse.get("Trainer Value", 0.0)))
-                        cv_val   = float(horse.get("raw_class_value", horse.get("Class Value", 0.0)))
-                        bv_val   = float(horse.get("raw_barrier_value", horse.get("Barrier Value", 0.0)))
-                        sv_val   = float(horse.get("raw_stats_value", horse.get("Stats Value", 0.0)))
-                        wv_val   = float(horse.get("raw_weight_diff", horse.get("Weight Diff Value", 0.0)))
+                        calculated_field = []
+                        for horse in race_horses:
+                            h_name = horse.get("horse_name", horse.get("excel_name", "Unknown Horse"))
+                            j_name = horse.get("jockey", horse.get("Jockey Name", horse.get("Jockey", "TBA")))
+                            t_name = horse.get("trainer", horse.get("Trainer Name", horse.get("Trainer", "TBA")))
+                            
+                            base_rat = float(horse.get("raw_total_rating", horse.get("Live Rating", horse.get("Rating", 0.0))))
+                            jv_val   = float(horse.get("raw_jockey_value", horse.get("Jockey Value", 0.0)))
+                            tv_val   = float(horse.get("raw_trainer_value", horse.get("Trainer Value", 0.0)))
+                            cv_val   = float(horse.get("raw_class_value", horse.get("Class Value", 0.0)))
+                            bv_val   = float(horse.get("raw_barrier_value", horse.get("Barrier Value", 0.0)))
+                            sv_val   = float(horse.get("raw_stats_value", horse.get("Stats Value", 0.0)))
+                            wv_val   = float(horse.get("raw_weight_diff", horse.get("Weight Diff Value", 0.0)))
 
-                        # Real-time calculation applying both User Sliders & Admin Baseline Multipliers
-                        live_rating = base_rat + (
-                            (jv_val * st.session_state["u_jockey"] * st.session_state["a_jockey"]) +
-                            (tv_val * st.session_state["u_trainer"] * st.session_state["a_trainer"]) +
-                            (cv_val * st.session_state["u_class"] * st.session_state["a_class"]) +
-                            (bv_val * st.session_state["u_barrier"] * st.session_state["a_barrier"]) +
-                            (sv_val * st.session_state["u_stats"] * st.session_state["a_stats"]) +
-                            (wv_val * st.session_state["u_weight"] * st.session_state["a_weight"])
-                        )
+                            # Real-time calculation applying both User Sliders & Admin Baseline Multipliers
+                            live_rating = base_rat + (
+                                (jv_val * st.session_state["u_jockey"] * st.session_state["a_jockey"]) +
+                                (tv_val * st.session_state["u_trainer"] * st.session_state["a_trainer"]) +
+                                (cv_val * st.session_state["u_class"] * st.session_state["a_class"]) +
+                                (bv_val * st.session_state["u_barrier"] * st.session_state["a_barrier"]) +
+                                (sv_val * st.session_state["u_stats"] * st.session_state["a_stats"]) +
+                                (wv_val * st.session_state["u_weight"] * st.session_state["a_weight"])
+                            )
+                            
+                            calculated_field.append({
+                                "Horse": h_name,
+                                "Jockey": j_name if str(j_name).strip() != "" else "TBA",
+                                "Trainer": t_name if str(t_name).strip() != "" else "TBA",
+                                "Calculated Live Rating": round(live_rating, 3),
+                                "Previous_Starts": horse.get("previous_starts", horse.get("Previous_Starts", []))
+                            })
                         
-                        calculated_field.append({
-                            "Horse": h_name,
-                            "Jockey": j_name if str(j_name).strip() != "" else "TBA",
-                            "Trainer": t_name if str(t_name).strip() != "" else "TBA",
-                            "Calculated Live Rating": round(live_rating, 3),
-                            "Previous_Starts": horse.get("previous_starts", horse.get("Previous_Starts", []))
-                        })
-                    
-                    # Sort field by total Live Rating in descending order
-                    calculated_field.sort(key=lambda x: x["Calculated Live Rating"], reverse=True)
-                    
-                    for item in calculated_field:
-                        card_label = f"**{item['Horse']}** | Adjusted Rating: **{item['Calculated Live Rating']:.3f}**"
-                        with st.expander(card_label, expanded=False):
-                            st.markdown(f"**Jockey:** {item['Jockey']} &nbsp;|&nbsp; **Trainer:** {item['Trainer']}")
-                            starts = item["Previous_Starts"]
-                            if starts:
-                                st.table(starts)
-                            else:
-                                st.caption("No historical form data available.")
+                        calculated_field.sort(key=lambda x: x["Calculated Live Rating"], reverse=True)
+                        
+                        for item in calculated_field:
+                            card_label = f"**{item['Horse']}** | Adjusted Rating: **{item['Calculated Live Rating']:.3f}**"
+                            with st.expander(card_label, expanded=False):
+                                st.markdown(f"**Jockey:** {item['Jockey']} &nbsp;|&nbsp; **Trainer:** {item['Trainer']}")
+                                starts = item["Previous_Starts"]
+                                if starts:
+                                    st.table(starts)
+                                else:
+                                    st.caption("No historical form data available.")
         except Exception as e:
             st.error(f"Error reading JSON database: {e}")
 
