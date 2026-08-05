@@ -6,7 +6,7 @@ import os
 st.set_page_config(page_title="Puntermatic", page_icon="🏇", layout="wide")
 
 # ------------------------------------------------------------------------------
-# CUSTOM CSS: STYLING, CUSTOM COLOR FILLS & ENLARGED TEXT
+# CUSTOM CSS: STYLING, SOLID BLUE/YELLOW CARDS & BOLD TABLE HEADERS
 # ------------------------------------------------------------------------------
 st.markdown("""
     <style>
@@ -25,7 +25,7 @@ st.markdown("""
     .punter-title {
         font-size: 2.8rem !important;
         font-weight: 900 !important;
-        color: #1E3A8A !important;
+        color: #216bd1 !important; /* Deep Racing Blue */
         letter-spacing: 1px !important;
         margin-bottom: 2px !important;
         line-height: 1.1 !important;
@@ -33,37 +33,29 @@ st.markdown("""
     .punter-subtitle {
         font-size: 1.5rem !important;
         font-weight: 500 !important;
-        color: #4B5563 !important;
+        color: #216bd1 !important; /* Slate Gray */
         margin-top: 0px !important;
     }
     
     /* Section Subheaders */
     h2, h3, .stSubheader {
-        font-size: 2.0rem !important;
+        font-size: 1.8rem !important;
         font-weight: 700 !important;
         color: #216bd1 !important;
     }
     
-    /* Enlarge "Select Race" Label & Selectbox Text */
+    /* Selectbox Label and Larger Selectbox Text */
     .stSelectbox label {
-        font-size: 1.6rem !important;
-        font-weight: 800 !important;
-        color: #216bd1 !important;
+        font-size: 1.3rem !important;
+        font-weight: 700 !important;
+        color: #1F2937 !important;
     }
     div[data-baseweb="select"] div {
-        font-size: 1.5rem !important;
+        font-size: 1.4rem !important;
         font-weight: 700 !important;
-        color: #216bd1 !important;
+        color: #1E3A8A !important;
     }
     
-    /* Enlarge Current Race Distance Text */
-    .race-distance-text {
-        font-size: 1.5rem !important;
-        font-weight: 700 !important;
-        color: #216bd1 !important;
-        margin-bottom: 10px !important;
-    }
-
     /* Enlarge Slider Labels */
     .stSlider label {
         font-size: 1.25rem !important;
@@ -88,28 +80,27 @@ st.markdown("""
         cursor: pointer;
     }
     
-    /* HORSE CARDS: #216bd1 FILL WITH ENLARGED #2e707 TEXT */
+    /* STYLED HORSE CARDS: DEEP BLUE FILL WITH BRIGHT YELLOW TEXT */
     .stExpander {
-        border: 2px solid #216bd1 !important;
+        border: 2px solid #1E3A8A !important;
         border-radius: 8px !important;
-        background-color: #216bd1 !important;
+        background-color: #1E3A8A !important;
         margin-bottom: 12px !important;
         box-shadow: 0 3px 6px rgba(0,0,0,0.15) !important;
     }
     .stExpander > details > summary {
-        background-color: #216bd1 !important;
-        color: #2e707 !important;
-        font-size: 1.5rem !important; /* Increased horse title size */
+        background-color: #1E3A8A !important;
+        color: #FFD700 !important; /* Bright Yellow */
+        font-size: 1.3rem !important;
         font-weight: 800 !important;
         border-radius: 6px !important;
-        padding: 12px 16px !important;
+        padding: 10px 14px !important;
     }
     .stExpander > details > summary * {
-        color: #2e707 !important; /* Ensure child spans/markdown inherit #2e707 */
-        font-size: 1.5rem !important;
+        color: #FFD700 !important; /* Ensure child spans/markdown are bright yellow */
     }
     
-    /* Expander Inner Content Area (Form Tables) */
+    /* Expander Inner Content Area (White background for start history tables) */
     .stExpander > details > div {
         background-color: #FFFFFF !important;
         color: #111827 !important;
@@ -118,10 +109,10 @@ st.markdown("""
         border-bottom-right-radius: 6px !important;
     }
 
-    /* Bold Table Headers for Form History */
+    /* BOLD TABLE HEADERS FOR FORM DATA */
     .stTable table th, div[data-testid="stTable"] th {
         font-weight: 800 !important;
-        font-size: 1.15rem !important;
+        font-size: 1.1rem !important;
         color: #0F172A !important;
         background-color: #F1F5F9 !important;
     }
@@ -207,7 +198,7 @@ if selected_page == "📊 Live Race Fields & Ratings":
                         race_distance = race_horses[0].get("current_distance", race_horses[0].get("Current Distance", "N/A"))
                         
                         st.subheader(f"{race_display_map[selected_raw_key]}")
-                        st.markdown(f'<div class="race-distance-text">Current Race Distance: {race_distance}m</div>', unsafe_allow_html=True)
+                        st.markdown(f"**Current Race Distance: {race_distance}m**")
                         st.write("---")
 
                         # Detect if any user or admin slider has been modified from default (1.0)
