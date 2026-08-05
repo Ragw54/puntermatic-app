@@ -25,7 +25,7 @@ st.markdown("""
     .punter-title {
         font-size: 2.8rem !important;
         font-weight: 900 !important;
-        color: #1E3A8A !important; /* Deep Racing Blue */
+        color: #2f1aab !important; /* Deep Racing Blue */
         letter-spacing: 1px !important;
         margin-bottom: 2px !important;
         line-height: 1.1 !important;
@@ -33,7 +33,7 @@ st.markdown("""
     .punter-subtitle {
         font-size: 1.5rem !important;
         font-weight: 500 !important;
-        color: #4B5563 !important; /* Slate Gray */
+        color: #2f1aab !important; /* Slate Gray */
         margin-top: 0px !important;
     }
     
@@ -41,7 +41,7 @@ st.markdown("""
     h2, h3, .stSubheader {
         font-size: 1.8rem !important;
         font-weight: 700 !important;
-        color: #111827 !important;
+        color: #2f1aab !important;
     }
     
     /* Selectbox Label and Larger Selectbox Text */
