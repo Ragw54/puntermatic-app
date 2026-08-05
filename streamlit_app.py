@@ -6,7 +6,7 @@ import os
 st.set_page_config(page_title="Puntermatic", page_icon="🏇", layout="wide")
 
 # ------------------------------------------------------------------------------
-# CUSTOM CSS: COLOR STYLING, CENTERED TOP HEADER & PADDING ADJUSTMENT
+# CUSTOM CSS: STYLING, SOLID BLUE/YELLOW CARDS & BOLD TABLE HEADERS
 # ------------------------------------------------------------------------------
 st.markdown("""
     <style>
@@ -80,14 +80,41 @@ st.markdown("""
         cursor: pointer;
     }
     
-    /* Styled Card Backgrounds for Race Field Runners */
+    /* STYLED HORSE CARDS: DEEP BLUE FILL WITH BRIGHT YELLOW TEXT */
     .stExpander {
-        border: 1px solid #D1D5DB !important;
-        border-top: 4px solid #2563EB !important; /* Accent Blue Top Bar */
+        border: 2px solid #1E3A8A !important;
         border-radius: 8px !important;
+        background-color: #1E3A8A !important;
+        margin-bottom: 12px !important;
+        box-shadow: 0 3px 6px rgba(0,0,0,0.15) !important;
+    }
+    .stExpander > details > summary {
+        background-color: #1E3A8A !important;
+        color: #FFD700 !important; /* Bright Yellow */
+        font-size: 1.3rem !important;
+        font-weight: 800 !important;
+        border-radius: 6px !important;
+        padding: 10px 14px !important;
+    }
+    .stExpander > details > summary * {
+        color: #FFD700 !important; /* Ensure child spans/markdown are bright yellow */
+    }
+    
+    /* Expander Inner Content Area (White background for start history tables) */
+    .stExpander > details > div {
         background-color: #FFFFFF !important;
-        margin-bottom: 10px !important;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.05) !important;
+        color: #111827 !important;
+        padding: 14px !important;
+        border-bottom-left-radius: 6px !important;
+        border-bottom-right-radius: 6px !important;
+    }
+
+    /* BOLD TABLE HEADERS FOR FORM DATA */
+    .stTable table th, div[data-testid="stTable"] th {
+        font-weight: 800 !important;
+        font-size: 1.1rem !important;
+        color: #0F172A !important;
+        background-color: #F1F5F9 !important;
     }
     </style>
 """, unsafe_allow_html=True)
@@ -173,6 +200,12 @@ if selected_page == "📊 Live Race Fields & Ratings":
                         st.subheader(f"{race_display_map[selected_raw_key]}")
                         st.markdown(f"**Current Race Distance: {race_distance}m**")
                         st.write("---")
+
+                        # Detect if any user or admin slider has been modified from default (1.0)
+                        sliders_modified = any(
+                            st.session_state[k] != 1.0 for k in slider_keys
+                        )
+                        rating_label_prefix = "Adjusted Rating" if sliders_modified else "Rating"
                         
                         calculated_field = []
                         for horse in race_horses:
@@ -208,7 +241,7 @@ if selected_page == "📊 Live Race Fields & Ratings":
                         calculated_field.sort(key=lambda x: x["Calculated Live Rating"], reverse=True)
                         
                         for item in calculated_field:
-                            card_label = f"**{item['Horse']}** | Adjusted Rating: **{item['Calculated Live Rating']:.3f}**"
+                            card_label = f"**{item['Horse']}** | {rating_label_prefix}: **{item['Calculated Live Rating']:.3f}**"
                             with st.expander(card_label, expanded=False):
                                 st.markdown(f"**Jockey:** {item['Jockey']} &nbsp;|&nbsp; **Trainer:** {item['Trainer']}")
                                 starts = item["Previous_Starts"]
