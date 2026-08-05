@@ -6,21 +6,58 @@ import os
 st.set_page_config(page_title="Puntermatic", page_icon="🏇", layout="wide")
 
 # ------------------------------------------------------------------------------
-# CUSTOM CSS: ENLARGE HEADERS, CATEGORY TEXT, AND CHECKBOXES/RADIOS
+# CUSTOM CSS: COLOR STYLING, COMPACT TOP PADDING & ENLARGED TEXT
 # ------------------------------------------------------------------------------
 st.markdown("""
     <style>
-    /* Main Titles and Section Headers */
-    h1 {
-        font-size: 2.2rem !important;
-        font-weight: 700 !important;
+    /* Remove default top padding to push content as high as possible */
+    .block-container {
+        padding-top: 1rem !important;
+        padding-bottom: 1rem !important;
     }
-    h2, h3, .stSubheader {
+    
+    /* Header Styling */
+    .punter-title {
+        font-size: 2.6rem !important;
+        font-weight: 800 !important;
+        color: #1E3A8A !important; /* Deep Racing Blue */
+        margin-bottom: 0px !important;
+        padding-bottom: 0px !important;
+        line-height: 1.1 !important;
+    }
+    .punter-subtitle {
         font-size: 1.6rem !important;
+        font-weight: 400 !important;
+        color: #4B5563 !important; /* Neutral Gray */
+        margin-top: 2px !important;
+        margin-bottom: 15px !important;
+    }
+    
+    /* Section Headers */
+    h2, h3, .stSubheader {
+        font-size: 1.8rem !important;
+        font-weight: 700 !important;
+        color: #111827 !important;
+    }
+    
+    /* Selectbox Label and Larger Selectbox Input Text */
+    .stSelectbox label {
+        font-size: 1.3rem !important;
+        font-weight: 600 !important;
+        color: #1F2937 !important;
+    }
+    div[data-baseweb="select"] div {
+        font-size: 1.4rem !important;
         font-weight: 600 !important;
     }
     
-    /* ENLARGE SIDEBAR NAVIGATION PANE & RADIO BUTTONS */
+    /* Enlarge Slider Labels & Options */
+    .stSlider label {
+        font-size: 1.25rem !important;
+        font-weight: 600 !important;
+    }
+
+    /* Enlarge Sidebar Radio Buttons & Navigation Pane */
     section[data-testid="stSidebar"] {
         width: 320px !important;
     }
@@ -36,16 +73,22 @@ st.markdown("""
         margin-right: 12px !important;
         cursor: pointer;
     }
-
-    /* Slider Labels & Inputs */
-    .stSlider label, .stSelectbox label, .stTextInput label {
-        font-size: 1.25rem !important;
-        font-weight: 600 !important;
+    
+    /* Styled Card Backgrounds for Race Ratings */
+    .stExpander {
+        border: 1px solid #E5E7EB !important;
+        border-radius: 8px !important;
+        background-color: #F9FAFB !important;
+        margin-bottom: 8px !important;
     }
     </style>
 """, unsafe_allow_html=True)
 
-st.title("🏇 Puntermatic Race Dashboard")
+# ------------------------------------------------------------------------------
+# TOP HEADER SECTION (MOVED UP & REFORMATED)
+# ------------------------------------------------------------------------------
+st.markdown('<div class="punter-title">PUNTERMATIC</div>', unsafe_allow_html=True)
+st.markdown('<div class="punter-subtitle">Race Selection</div>', unsafe_allow_html=True)
 
 # Initialize default session state values for all 6 core metrics
 slider_keys = [
@@ -73,9 +116,7 @@ if st.session_state["admin_authenticated"]:
 
 selected_page = st.sidebar.radio("Select Application View", pages)
 
-# ------------------------------------------------------------------------------
-# DYNAMIC DATABASE PATH LOCATOR
-# ------------------------------------------------------------------------------
+# Dynamic Database Locator
 user_prof = os.environ.get("USERPROFILE", "")
 possible_paths = [
     "Full_Puntermatic_Migration.json",
@@ -95,7 +136,7 @@ for p in possible_paths:
 if selected_page == "📊 Live Race Fields & Ratings":
     if not json_path:
         st.error("❌ Database file `Full_Puntermatic_Migration.json` was not found.")
-        st.info("Please make sure `Full_Puntermatic_Migration.json` is uploaded to your GitHub repository.")
+        st.info("Please verify that `Full_Puntermatic_Migration.json` is uploaded to your GitHub repository.")
     else:
         try:
             with open(json_path, "r") as f:
@@ -106,17 +147,20 @@ if selected_page == "📊 Live Race Fields & Ratings":
                 st.warning("JSON loaded, but no race sheets were found inside.")
             else:
                 race_display_map = {k: f"Race {k.replace('R', '').replace('Temp', '')}" for k in raw_keys}
-                selected_raw_key = st.selectbox("Select Race Sheet", raw_keys, format_func=lambda x: race_display_map[x])
+                
+                # Relabeled dropdown prompt to "Select Race" (removed "Sheet")
+                selected_raw_key = st.selectbox("Select Race", raw_keys, format_func=lambda x: race_display_map[x])
                 
                 if selected_raw_key:
                     race_horses = race_database.get(selected_raw_key, [])
                     
                     if not race_horses or len(race_horses) == 0:
-                        st.warning(f"No runners or form data found for {race_display_map[selected_raw_key]}.")
+                        st.warning(f"No runners found for {race_display_map[selected_raw_key]}.")
                     else:
                         race_distance = race_horses[0].get("current_distance", race_horses[0].get("Current Distance", "N/A"))
                         
-                        st.subheader(f"Field Overview: {race_display_map[selected_raw_key]}")
+                        # Display race name directly without "Field Overview:"
+                        st.subheader(f"{race_display_map[selected_raw_key]}")
                         st.markdown(f"**Current Race Distance: {race_distance}m**")
                         st.write("---")
                         
@@ -134,7 +178,6 @@ if selected_page == "📊 Live Race Fields & Ratings":
                             sv_val   = float(horse.get("raw_stats_value", horse.get("Stats Value", 0.0)))
                             wv_val   = float(horse.get("raw_weight_diff", horse.get("Weight Diff Value", 0.0)))
 
-                            # Real-time calculation applying both User Sliders & Admin Baseline Multipliers
                             live_rating = base_rat + (
                                 (jv_val * st.session_state["u_jockey"] * st.session_state["a_jockey"]) +
                                 (tv_val * st.session_state["u_trainer"] * st.session_state["a_trainer"]) +
@@ -171,7 +214,7 @@ if selected_page == "📊 Live Race Fields & Ratings":
 # ------------------------------------------------------------------------------
 elif selected_page == "🎛️ Adjust Slider Settings":
     st.subheader("🎛️ Category Calculation Factors")
-    st.write("Adjust the weighting factors (0.00 to 2.00) applied to each performance category:")
+    st.write("Adjust weighting factors (0.00 to 2.00) applied to each performance category:")
     st.divider()
 
     st.session_state["u_jockey"]  = st.slider("Jockey Value Multiplier", 0.0, 2.0, float(st.session_state["u_jockey"]), step=0.05)
