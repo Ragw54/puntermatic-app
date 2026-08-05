@@ -6,58 +6,64 @@ import os
 st.set_page_config(page_title="Puntermatic", page_icon="🏇", layout="wide")
 
 # ------------------------------------------------------------------------------
-# CUSTOM CSS: COLOR STYLING, COMPACT TOP PADDING & ENLARGED TEXT
+# CUSTOM CSS: COLOR STYLING, CENTERED TOP HEADER & PADDING ADJUSTMENT
 # ------------------------------------------------------------------------------
 st.markdown("""
     <style>
-    /* Remove default top padding to push content as high as possible */
+    /* Prevent taskbar clipping while keeping high placement */
     .block-container {
-        padding-top: 1rem !important;
+        padding-top: 2rem !important;
         padding-bottom: 1rem !important;
     }
     
-    /* Header Styling */
+    /* Centered Header Section */
+    .punter-header-container {
+        text-align: center !important;
+        margin-top: 15px !important;
+        margin-bottom: 20px !important;
+    }
     .punter-title {
-        font-size: 2.6rem !important;
-        font-weight: 800 !important;
+        font-size: 2.8rem !important;
+        font-weight: 900 !important;
         color: #1E3A8A !important; /* Deep Racing Blue */
-        margin-bottom: 0px !important;
-        padding-bottom: 0px !important;
+        letter-spacing: 1px !important;
+        margin-bottom: 2px !important;
         line-height: 1.1 !important;
     }
     .punter-subtitle {
-        font-size: 1.6rem !important;
-        font-weight: 400 !important;
-        color: #4B5563 !important; /* Neutral Gray */
-        margin-top: 2px !important;
-        margin-bottom: 15px !important;
+        font-size: 1.5rem !important;
+        font-weight: 500 !important;
+        color: #4B5563 !important; /* Slate Gray */
+        margin-top: 0px !important;
     }
     
-    /* Section Headers */
+    /* Section Subheaders */
     h2, h3, .stSubheader {
         font-size: 1.8rem !important;
         font-weight: 700 !important;
         color: #111827 !important;
     }
     
-    /* Selectbox Label and Larger Selectbox Input Text */
+    /* Selectbox Label and Larger Selectbox Text */
     .stSelectbox label {
         font-size: 1.3rem !important;
-        font-weight: 600 !important;
+        font-weight: 700 !important;
         color: #1F2937 !important;
     }
     div[data-baseweb="select"] div {
         font-size: 1.4rem !important;
-        font-weight: 600 !important;
+        font-weight: 700 !important;
+        color: #1E3A8A !important;
     }
     
-    /* Enlarge Slider Labels & Options */
+    /* Enlarge Slider Labels */
     .stSlider label {
         font-size: 1.25rem !important;
         font-weight: 600 !important;
+        color: #111827 !important;
     }
 
-    /* Enlarge Sidebar Radio Buttons & Navigation Pane */
+    /* Enlarge Sidebar Navigation Pane & Radio Targets */
     section[data-testid="stSidebar"] {
         width: 320px !important;
     }
@@ -74,21 +80,27 @@ st.markdown("""
         cursor: pointer;
     }
     
-    /* Styled Card Backgrounds for Race Ratings */
+    /* Styled Card Backgrounds for Race Field Runners */
     .stExpander {
-        border: 1px solid #E5E7EB !important;
+        border: 1px solid #D1D5DB !important;
+        border-top: 4px solid #2563EB !important; /* Accent Blue Top Bar */
         border-radius: 8px !important;
-        background-color: #F9FAFB !important;
-        margin-bottom: 8px !important;
+        background-color: #FFFFFF !important;
+        margin-bottom: 10px !important;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05) !important;
     }
     </style>
 """, unsafe_allow_html=True)
 
 # ------------------------------------------------------------------------------
-# TOP HEADER SECTION (MOVED UP & REFORMATED)
+# CENTERED TOP HEADER SECTION
 # ------------------------------------------------------------------------------
-st.markdown('<div class="punter-title">PUNTERMATIC</div>', unsafe_allow_html=True)
-st.markdown('<div class="punter-subtitle">Race Selection</div>', unsafe_allow_html=True)
+st.markdown("""
+    <div class="punter-header-container">
+        <div class="punter-title">PUNTERMATIC</div>
+        <div class="punter-subtitle">Race Selection</div>
+    </div>
+""", unsafe_allow_html=True)
 
 # Initialize default session state values for all 6 core metrics
 slider_keys = [
@@ -148,7 +160,6 @@ if selected_page == "📊 Live Race Fields & Ratings":
             else:
                 race_display_map = {k: f"Race {k.replace('R', '').replace('Temp', '')}" for k in raw_keys}
                 
-                # Relabeled dropdown prompt to "Select Race" (removed "Sheet")
                 selected_raw_key = st.selectbox("Select Race", raw_keys, format_func=lambda x: race_display_map[x])
                 
                 if selected_raw_key:
@@ -159,7 +170,6 @@ if selected_page == "📊 Live Race Fields & Ratings":
                     else:
                         race_distance = race_horses[0].get("current_distance", race_horses[0].get("Current Distance", "N/A"))
                         
-                        # Display race name directly without "Field Overview:"
                         st.subheader(f"{race_display_map[selected_raw_key]}")
                         st.markdown(f"**Current Race Distance: {race_distance}m**")
                         st.write("---")
