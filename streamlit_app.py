@@ -6,19 +6,20 @@ import os
 st.set_page_config(page_title="Puntermatic", page_icon="🏇", layout="wide")
 
 # ------------------------------------------------------------------------------
-# CUSTOM CSS: STYLING & ISOLATED RACE SELECTOR / SLIDER THEMING
+# CUSTOM CSS: STYLING, CENTERED 3-COLUMN RACE GRID & BLUE SLIDERS
 # ------------------------------------------------------------------------------
 st.markdown("""
     <style>
+    /* Prevent taskbar clipping while keeping high placement */
     .block-container {
-        padding-top: 1.5rem !important;
+        padding-top: 1.2rem !important;
         padding-bottom: 1rem !important;
     }
     
     .punter-header-container {
         text-align: center !important;
-        margin-top: 10px !important;
-        margin-bottom: 12px !important;
+        margin-top: 5px !important;
+        margin-bottom: 10px !important;
     }
     
     /* PUNTERMATIC MAIN TITLE */
@@ -32,43 +33,48 @@ st.markdown("""
         line-height: 1.1 !important;
     }
     
-    /* Race Selection Label */
+    /* Race Selection Label under PUNTERMATIC */
     .race-select-label {
-        font-size: 1.25rem !important;
-        font-weight: 400 !important;
+        font-size: 1.35rem !important;
+        font-weight: 400 !important; /* Unbolded */
         color: #216bd1 !important;
-        margin-bottom: 8px !important;
+        margin-bottom: 10px !important;
         text-align: center !important;
         width: 100% !important;
     }
     
     /* -------------------------------------------------------------------------
-       ISOLATED MAIN PAGE RACE SELECTOR GRID (DOES NOT AFFECT SIDEBAR)
+       MAIN PAGE RACE SELECTOR (3 ACROSS, CENTERED, CLEAN BUTTONS)
        ------------------------------------------------------------------------- */
-    div[data-testid="stRadio"]:has(div[data-testid="stMarkdownContainer"] p:contains("RaceSelectorAnchor")) > label {
+    /* Hide label of main page radio */
+    div[data-testid="stMainBlockContainer"] div[data-testid="stRadio"] > label {
         display: none !important;
     }
     
-    div[data-testid="stRadio"]:has(div[data-testid="stMarkdownContainer"] p:contains("RaceSelectorAnchor")) {
+    /* Center radio container */
+    div[data-testid="stMainBlockContainer"] div[data-testid="stRadio"] {
         display: flex !important;
         justify-content: center !important;
         width: 100% !important;
     }
     
-    div[data-testid="stRadio"]:has(div[data-testid="stMarkdownContainer"] p:contains("RaceSelectorAnchor")) div[role="radiogroup"] {
+    /* 3-Column Grid for Race Buttons */
+    div[data-testid="stMainBlockContainer"] div[data-testid="stRadio"] div[role="radiogroup"] {
         display: grid !important;
         grid-template-columns: repeat(3, 1fr) !important;
         gap: 8px !important;
         width: 100% !important;
-        max-width: 460px !important;
+        max-width: 480px !important;
         margin: 0 auto !important;
     }
     
-    div[data-testid="stRadio"]:has(div[data-testid="stMarkdownContainer"] p:contains("RaceSelectorAnchor")) div[role="radiogroup"] input[type="radio"] {
+    /* Hide radio circle target inside race buttons */
+    div[data-testid="stMainBlockContainer"] div[data-testid="stRadio"] div[role="radiogroup"] input[type="radio"] {
         display: none !important;
     }
     
-    div[data-testid="stRadio"]:has(div[data-testid="stMarkdownContainer"] p:contains("RaceSelectorAnchor")) div[role="radiogroup"] label {
+    /* Rectangular Race Buttons */
+    div[data-testid="stMainBlockContainer"] div[data-testid="stRadio"] div[role="radiogroup"] label {
         background-color: #F1F5F9 !important;
         border: 2px solid #216bd1 !important;
         border-radius: 8px !important;
@@ -80,7 +86,7 @@ st.markdown("""
         width: 100% !important;
     }
     
-    div[data-testid="stRadio"]:has(div[data-testid="stMarkdownContainer"] p:contains("RaceSelectorAnchor")) div[role="radiogroup"] label p {
+    div[data-testid="stMainBlockContainer"] div[data-testid="stRadio"] div[role="radiogroup"] label p {
         font-size: 1.25rem !important;
         font-weight: 700 !important;
         color: #216bd1 !important;
@@ -88,73 +94,80 @@ st.markdown("""
         text-align: center !important;
     }
     
-    div[data-testid="stRadio"]:has(div[data-testid="stMarkdownContainer"] p:contains("RaceSelectorAnchor")) div[role="radiogroup"] label:has(input:checked) {
+    /* Active Selected Race Button */
+    div[data-testid="stMainBlockContainer"] div[data-testid="stRadio"] div[role="radiogroup"] label:has(input:checked) {
         background-color: #216bd1 !important;
         border-color: #216bd1 !important;
     }
-    div[data-testid="stRadio"]:has(div[data-testid="stMarkdownContainer"] p:contains("RaceSelectorAnchor")) div[role="radiogroup"] label:has(input:checked) p {
+    div[data-testid="stMainBlockContainer"] div[data-testid="stRadio"] div[role="radiogroup"] label:has(input:checked) p {
         color: #FFFFFF !important;
     }
 
     /* -------------------------------------------------------------------------
-       SIDEBAR NAVIGATION STYLING (RESTORED VERTICAL LAYOUT)
+       SIDEBAR NAVIGATION STYLING (#216bd1 TEXT & CHECKBOX CIRCLES)
        ------------------------------------------------------------------------- */
     section[data-testid="stSidebar"] {
         width: 320px !important;
     }
-    section[data-testid="stSidebar"] div[role="radiogroup"] {
-        display: flex !important;
-        flex-direction: column !important;
-        gap: 10px !important;
+    section[data-testid="stSidebar"] h1, 
+    section[data-testid="stSidebar"] h2, 
+    section[data-testid="stSidebar"] h3,
+    section[data-testid="stSidebar"] .stMarkdown p {
+        color: #216bd1 !important;
     }
-    section[data-testid="stSidebar"] div[role="radiogroup"] label {
-        display: flex !important;
-        align-items: center !important;
-        background-color: #F8FAFC !important;
-        border: 1.5 solid #CBD5E1 !important;
-        border-radius: 8px !important;
-        padding: 10px 12px !important;
-        width: 100% !important;
-    }
+    
     section[data-testid="stSidebar"] div[role="radiogroup"] label p {
-        font-size: 1.2rem !important;
+        font-size: 1.25rem !important;
         font-weight: 600 !important;
-        color: #1E293B !important;
-        margin: 0 !important;
+        color: #216bd1 !important;
+    }
+    
+    /* Recolor Navigation Radio Circles to #216bd1 */
+    section[data-testid="stSidebar"] input[type="radio"] {
+        accent-color: #216bd1 !important;
+        width: 20px !important;
+        height: 20px !important;
     }
     
     /* -------------------------------------------------------------------------
-       CATEGORY SLIDER PAGE STYLING (#216bd1 COLOR THEME)
+       CATEGORY ADJUSTMENT PAGE STYLING (#216bd1 THEME & UNBOLDED TEXT)
        ------------------------------------------------------------------------- */
     .slider-header-centered {
         text-align: center !important;
         font-size: 2.2rem !important;
-        font-weight: 800 !important;
+        font-weight: 400 !important; /* Unbolded */
         color: #216bd1 !important;
-        margin-top: 10px !important;
+        margin-top: 0px !important;
         margin-bottom: 4px !important;
     }
     .slider-subtitle-centered {
         text-align: center !important;
         font-size: 1.25rem !important;
-        font-weight: 500 !important;
+        font-weight: 400 !important;
         color: #216bd1 !important;
-        margin-bottom: 25px !important;
+        margin-bottom: 15px !important;
     }
     
-    /* Enlarged & Recolored Slider Labels and Values */
+    /* Unbolded Multiplier Headers */
     .stSlider label p {
-        font-size: 1.4rem !important;
-        font-weight: 700 !important;
+        font-size: 1.35rem !important;
+        font-weight: 400 !important; /* Unbolded */
         color: #216bd1 !important;
     }
-    div[data-testid="stSlider"] div {
+    
+    /* RECOLOR SLIDER TRACKS, HANDLES & VALUES TO #216bd1 */
+    div[data-testid="stSlider"] p,
+    div[data-testid="stSlider"] span {
         color: #216bd1 !important;
     }
     div[data-testid="stSlider"] div[data-baseweb="slider"] div {
         background-color: #216bd1 !important;
     }
-    
+    div[data-testid="stSlider"] div[role="slider"] {
+        background-color: #216bd1 !important;
+        border-color: #216bd1 !important;
+    }
+
     /* SIDE-BY-SIDE RACE TITLE & DISTANCE ROW */
     .race-info-header {
         display: flex !important;
@@ -280,21 +293,16 @@ if selected_page == "Live Race Fields & Ratings":
             else:
                 race_display_map = {k: f"Race {k.replace('R', '').replace('Temp', '')}" for k in raw_keys}
                 
-                # Render label
-                st.markdown('<div class="race-select-label">Select Race</div>', unsafe_allow_html=True)
+                # Render clean label
+                st.markdown('<div class="race-select-label">Race Selection</div>', unsafe_allow_html=True)
                 
-                # Column Layout to force strict dead-center positioning
-                _, race_center_col, _ = st.columns([1, 4, 1])
-                
-                with race_center_col:
-                    # Hidden anchor text used by CSS to target ONLY this radio group
-                    st.caption("RaceSelectorAnchor")
-                    selected_raw_key = st.radio(
-                        "RaceSelectorAnchor",
-                        raw_keys,
-                        format_func=lambda x: race_display_map[x],
-                        horizontal=True
-                    )
+                # Render 3-Column Centered Race Buttons
+                selected_raw_key = st.radio(
+                    "Race Selection",
+                    raw_keys,
+                    format_func=lambda x: race_display_map[x],
+                    horizontal=True
+                )
                 
                 if selected_raw_key:
                     race_horses = race_database.get(selected_raw_key, [])
