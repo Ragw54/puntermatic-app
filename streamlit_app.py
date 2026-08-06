@@ -46,14 +46,14 @@ st.markdown("""
     
     /* Selectbox Label and Larger Selectbox Text */
     .stSelectbox label {
-        font-size: 1.3rem !important;
+        font-size: 1.5rem !important;
         font-weight: 700 !important;
-        color: #1F2937 !important;
+        color: #216bd1 !important;
     }
     div[data-baseweb="select"] div {
         font-size: 1.4rem !important;
         font-weight: 700 !important;
-        color: #1E3A8A !important;
+        color: #216bd1 !important;
     }
     
     /* Enlarge Slider Labels */
