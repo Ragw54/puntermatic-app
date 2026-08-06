@@ -60,7 +60,7 @@ st.markdown("""
     .stSlider label {
         font-size: 1.25rem !important;
         font-weight: 600 !important;
-        color: #111827 !important;
+        color: #216bd1 !important;
     }
 
     /* Enlarge Sidebar Navigation Pane & Radio Targets */
@@ -84,7 +84,7 @@ st.markdown("""
     .stExpander {
         border: 2px solid #1E3A8A !important;
         border-radius: 8px !important;
-        background-color: #1E3A8A !important;
+        background-color: #216bd1 !important;
         margin-bottom: 12px !important;
         box-shadow: 0 3px 6px rgba(0,0,0,0.15) !important;
     }
@@ -103,7 +103,7 @@ st.markdown("""
     /* Expander Inner Content Area (White background for start history tables) */
     .stExpander > details > div {
         background-color: #FFFFFF !important;
-        color: #111827 !important;
+        color: #216bd1 !important;
         padding: 14px !important;
         border-bottom-left-radius: 6px !important;
         border-bottom-right-radius: 6px !important;
@@ -113,7 +113,7 @@ st.markdown("""
     .stTable table th, div[data-testid="stTable"] th {
         font-weight: 800 !important;
         font-size: 1.1rem !important;
-        color: #0F172A !important;
+        color: #216bd1 !important;
         background-color: #F1F5F9 !important;
     }
     </style>
