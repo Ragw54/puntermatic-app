@@ -111,8 +111,8 @@ st.markdown("""
 
     /* BOLD TABLE HEADERS FOR FORM DATA */
     .stTable table th, div[data-testid="stTable"] th {
-        font-weight: 800 !important;
-        font-size: 1.3rem !important;
+        font-weight: 900 !important;
+        font-size: 1.5rem !important;
         color: #216bd1 !important;
         background-color: #F1F5F9 !important;
     }
