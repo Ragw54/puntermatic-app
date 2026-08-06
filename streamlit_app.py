@@ -6,7 +6,7 @@ import os
 st.set_page_config(page_title="Puntermatic", page_icon="🏇", layout="wide")
 
 # ------------------------------------------------------------------------------
-# CUSTOM CSS: STYLING & 3-COLUMN RACE BUTTON GRID
+# CUSTOM CSS: STYLING, CENTERED 3-COLUMN RACE GRID & SIDE-BY-SIDE HEADER
 # ------------------------------------------------------------------------------
 st.markdown("""
     <style>
@@ -35,6 +35,7 @@ st.markdown("""
         font-weight: 400 !important;
         color: #216bd1 !important;
         margin-bottom: 6px !important;
+        text-align: center !important;
     }
     
     /* Hide Default Radio Label */
@@ -42,20 +43,22 @@ st.markdown("""
         display: none !important;
     }
     
-    /* 3-COLUMN GRID FOR RACE BUTTONS */
+    /* CENTERED 3-COLUMN GRID FOR RACE BUTTONS */
     div[data-testid="stRadio"] div[role="radiogroup"] {
         display: grid !important;
-        grid-template-columns: repeat(3, 1fr) !important; /* 3 Equal Columns */
+        grid-template-columns: repeat(3, 1fr) !important;
         gap: 8px !important;
         width: 100% !important;
+        max-width: 600px !important; /* Limits width to keep grid nicely centered */
+        margin: 0 auto !important; /* Centers grid horizontally */
     }
     
-    /* Smaller Compact Race Buttons */
+    /* Compact Race Buttons */
     div[data-testid="stRadio"] div[role="radiogroup"] label {
         background-color: #F1F5F9 !important;
         border: 2px solid #216bd1 !important;
         border-radius: 6px !important;
-        padding: 6px 4px !important; /* Reduced padding to fit 3-across easily */
+        padding: 6px 4px !important;
         text-align: center !important;
         justify-content: center !important;
         cursor: pointer !important;
@@ -63,26 +66,31 @@ st.markdown("""
     }
     
     div[data-testid="stRadio"] div[role="radiogroup"] label p {
-        font-size: 1.25rem !important; /* Compact readable font size */
+        font-size: 1.25rem !important;
         font-weight: 700 !important;
         color: #216bd1 !important;
         margin: 0 !important;
     }
     
-    /* Section Subheaders ("Race 1") */
-    h2, h3, .stSubheader {
+    /* SIDE-BY-SIDE RACE TITLE & DISTANCE ROW */
+    .race-info-header {
+        display: flex !important;
+        align-items: baseline !important;
+        gap: 16px !important;
+        margin-top: 15px !important;
+        margin-bottom: 5px !important;
+    }
+    .race-info-title {
         font-size: 1.8rem !important;
         font-weight: 700 !important;
         color: #216bd1 !important;
+        margin: 0 !important;
     }
-    
-    /* Race Distance Display Text (Unbolded) */
-    .race-distance-display {
+    .race-info-distance {
         font-size: 1.35rem !important;
         font-weight: 400 !important;
         color: #216bd1 !important;
-        margin-top: 4px !important;
-        margin-bottom: 8px !important;
+        margin: 0 !important;
     }
 
     /* Sidebar Styling */
@@ -201,7 +209,7 @@ if selected_page == "📊 Live Race Fields & Ratings":
                 # Render label
                 st.markdown('<div class="race-select-label">Select Race</div>', unsafe_allow_html=True)
                 
-                # Render 3-Column Grid Race Selection Buttons
+                # Render Centered 3-Column Grid Race Selection Buttons
                 selected_raw_key = st.radio(
                     "Select Race",
                     raw_keys,
@@ -218,8 +226,13 @@ if selected_page == "📊 Live Race Fields & Ratings":
                     else:
                         race_distance = race_horses[0].get("current_distance", race_horses[0].get("Current Distance", "N/A"))
                         
-                        st.subheader(f"{race_display_map[selected_raw_key]}")
-                        st.markdown(f'<div class="race-distance-display">Race Distance: {race_distance}m</div>', unsafe_allow_html=True)
+                        # Side-by-Side Row: Race Name and Distance
+                        st.markdown(f"""
+                            <div class="race-info-header">
+                                <span class="race-info-title">{race_display_map[selected_raw_key]}</span>
+                                <span class="race-info-distance">Distance: {race_distance}m</span>
+                            </div>
+                        """, unsafe_allow_html=True)
                         st.write("---")
 
                         sliders_modified = any(st.session_state[k] != 1.0 for k in slider_keys)
