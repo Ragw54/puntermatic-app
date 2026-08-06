@@ -6,26 +6,29 @@ import os
 st.set_page_config(page_title="Puntermatic", page_icon="🏇", layout="wide")
 
 # ------------------------------------------------------------------------------
-# CUSTOM CSS: STYLING, FORCED CENTERED 3-COLUMN RACE GRID & SIDE-BY-SIDE HEADER
+# CUSTOM CSS: STYLING & ISOLATED RACE SELECTOR / SLIDER THEMING
 # ------------------------------------------------------------------------------
 st.markdown("""
     <style>
     .block-container {
-        padding-top: 2rem !important;
+        padding-top: 1.5rem !important;
         padding-bottom: 1rem !important;
     }
     
     .punter-header-container {
         text-align: center !important;
-        margin-top: 15px !important;
-        margin-bottom: 15px !important;
+        margin-top: 10px !important;
+        margin-bottom: 12px !important;
     }
+    
+    /* PUNTERMATIC MAIN TITLE */
     .punter-title {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
         font-size: 2.8rem !important;
         font-weight: 900 !important;
         color: #216bd1 !important;
-        letter-spacing: 1px !important;
-        margin-bottom: 2px !important;
+        letter-spacing: 1.5px !important;
+        margin-bottom: 0px !important;
         line-height: 1.1 !important;
     }
     
@@ -34,42 +37,42 @@ st.markdown("""
         font-size: 1.25rem !important;
         font-weight: 400 !important;
         color: #216bd1 !important;
-        margin-bottom: 6px !important;
+        margin-bottom: 8px !important;
         text-align: center !important;
         width: 100% !important;
     }
     
-    /* Hide Default Radio Label */
-    div[data-testid="stRadio"] > label {
+    /* -------------------------------------------------------------------------
+       ISOLATED MAIN PAGE RACE SELECTOR GRID (DOES NOT AFFECT SIDEBAR)
+       ------------------------------------------------------------------------- */
+    div[data-testid="stRadio"]:has(div[data-testid="stMarkdownContainer"] p:contains("RaceSelectorAnchor")) > label {
         display: none !important;
     }
     
-    /* FORCE CENTER ALIGNMENT ON THE ENTIRE RADIO CONTAINER */
-    div[data-testid="stRadio"] {
+    div[data-testid="stRadio"]:has(div[data-testid="stMarkdownContainer"] p:contains("RaceSelectorAnchor")) {
         display: flex !important;
         justify-content: center !important;
-        align-items: center !important;
         width: 100% !important;
     }
     
-    /* CENTERED 3-COLUMN GRID FOR RACE BUTTONS */
-    div[data-testid="stRadio"] div[role="radiogroup"] {
+    div[data-testid="stRadio"]:has(div[data-testid="stMarkdownContainer"] p:contains("RaceSelectorAnchor")) div[role="radiogroup"] {
         display: grid !important;
         grid-template-columns: repeat(3, 1fr) !important;
         gap: 8px !important;
         width: 100% !important;
-        max-width: 500px !important; /* Kept compact so it centers cleanly */
+        max-width: 460px !important;
         margin: 0 auto !important;
-        justify-content: center !important;
-        justify-items: center !important;
     }
     
-    /* Compact Race Buttons */
-    div[data-testid="stRadio"] div[role="radiogroup"] label {
+    div[data-testid="stRadio"]:has(div[data-testid="stMarkdownContainer"] p:contains("RaceSelectorAnchor")) div[role="radiogroup"] input[type="radio"] {
+        display: none !important;
+    }
+    
+    div[data-testid="stRadio"]:has(div[data-testid="stMarkdownContainer"] p:contains("RaceSelectorAnchor")) div[role="radiogroup"] label {
         background-color: #F1F5F9 !important;
         border: 2px solid #216bd1 !important;
-        border-radius: 6px !important;
-        padding: 6px 4px !important;
+        border-radius: 8px !important;
+        padding: 8px 0px !important;
         text-align: center !important;
         justify-content: center !important;
         cursor: pointer !important;
@@ -77,12 +80,79 @@ st.markdown("""
         width: 100% !important;
     }
     
-    div[data-testid="stRadio"] div[role="radiogroup"] label p {
+    div[data-testid="stRadio"]:has(div[data-testid="stMarkdownContainer"] p:contains("RaceSelectorAnchor")) div[role="radiogroup"] label p {
         font-size: 1.25rem !important;
         font-weight: 700 !important;
         color: #216bd1 !important;
         margin: 0 !important;
         text-align: center !important;
+    }
+    
+    div[data-testid="stRadio"]:has(div[data-testid="stMarkdownContainer"] p:contains("RaceSelectorAnchor")) div[role="radiogroup"] label:has(input:checked) {
+        background-color: #216bd1 !important;
+        border-color: #216bd1 !important;
+    }
+    div[data-testid="stRadio"]:has(div[data-testid="stMarkdownContainer"] p:contains("RaceSelectorAnchor")) div[role="radiogroup"] label:has(input:checked) p {
+        color: #FFFFFF !important;
+    }
+
+    /* -------------------------------------------------------------------------
+       SIDEBAR NAVIGATION STYLING (RESTORED VERTICAL LAYOUT)
+       ------------------------------------------------------------------------- */
+    section[data-testid="stSidebar"] {
+        width: 320px !important;
+    }
+    section[data-testid="stSidebar"] div[role="radiogroup"] {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 10px !important;
+    }
+    section[data-testid="stSidebar"] div[role="radiogroup"] label {
+        display: flex !important;
+        align-items: center !important;
+        background-color: #F8FAFC !important;
+        border: 1.5 solid #CBD5E1 !important;
+        border-radius: 8px !important;
+        padding: 10px 12px !important;
+        width: 100% !important;
+    }
+    section[data-testid="stSidebar"] div[role="radiogroup"] label p {
+        font-size: 1.2rem !important;
+        font-weight: 600 !important;
+        color: #1E293B !important;
+        margin: 0 !important;
+    }
+    
+    /* -------------------------------------------------------------------------
+       CATEGORY SLIDER PAGE STYLING (#216bd1 COLOR THEME)
+       ------------------------------------------------------------------------- */
+    .slider-header-centered {
+        text-align: center !important;
+        font-size: 2.2rem !important;
+        font-weight: 800 !important;
+        color: #216bd1 !important;
+        margin-top: 10px !important;
+        margin-bottom: 4px !important;
+    }
+    .slider-subtitle-centered {
+        text-align: center !important;
+        font-size: 1.25rem !important;
+        font-weight: 500 !important;
+        color: #216bd1 !important;
+        margin-bottom: 25px !important;
+    }
+    
+    /* Enlarged & Recolored Slider Labels and Values */
+    .stSlider label p {
+        font-size: 1.4rem !important;
+        font-weight: 700 !important;
+        color: #216bd1 !important;
+    }
+    div[data-testid="stSlider"] div {
+        color: #216bd1 !important;
+    }
+    div[data-testid="stSlider"] div[data-baseweb="slider"] div {
+        background-color: #216bd1 !important;
     }
     
     /* SIDE-BY-SIDE RACE TITLE & DISTANCE ROW */
@@ -106,15 +176,6 @@ st.markdown("""
         margin: 0 !important;
     }
 
-    /* Sidebar Styling */
-    section[data-testid="stSidebar"] {
-        width: 320px !important;
-    }
-    section[data-testid="stSidebar"] .stRadio label {
-        font-size: 1.35rem !important;
-        font-weight: 600 !important;
-    }
-    
     /* HORSE CARDS: DEEP BLUE FILL WITH BRIGHT YELLOW TEXT */
     .stExpander {
         border: 2px solid #1E3A8A !important;
@@ -175,7 +236,7 @@ if "admin_authenticated" not in st.session_state:
 
 # Sidebar Setup
 st.sidebar.header("Navigation Menu")
-pages = ["📊 Live Race Fields & Ratings", "🎛️ Adjust Slider Settings"]
+pages = ["Live Race Fields & Ratings", "Adjust Slider Settings"]
 
 with st.sidebar.expander("⚙️ Master System Access"):
     admin_pin = st.text_input("Master Key Code", type="password")
@@ -183,9 +244,9 @@ with st.sidebar.expander("⚙️ Master System Access"):
         st.session_state["admin_authenticated"] = True
 
 if st.session_state["admin_authenticated"]:
-    pages.append("🔒 Admin Calibration Panel")
+    pages.append("Admin Calibration Panel")
 
-selected_page = st.sidebar.radio("Select Application View", pages)
+selected_page = st.sidebar.radio("Navigation Menu", pages, label_visibility="collapsed")
 
 # Dynamic Database Locator
 user_prof = os.environ.get("USERPROFILE", "")
@@ -204,7 +265,7 @@ for p in possible_paths:
 # ------------------------------------------------------------------------------
 # PAGE 1: LIVE RACE FIELDS & RATINGS
 # ------------------------------------------------------------------------------
-if selected_page == "📊 Live Race Fields & Ratings":
+if selected_page == "Live Race Fields & Ratings":
     if not json_path:
         st.error("❌ Database file `Full_Puntermatic_Migration.json` was not found.")
         st.info("Please verify that `Full_Puntermatic_Migration.json` is uploaded to your GitHub repository.")
@@ -222,14 +283,18 @@ if selected_page == "📊 Live Race Fields & Ratings":
                 # Render label
                 st.markdown('<div class="race-select-label">Select Race</div>', unsafe_allow_html=True)
                 
-                # Render Centered 3-Column Grid Race Selection Buttons
-                selected_raw_key = st.radio(
-                    "Select Race",
-                    raw_keys,
-                    format_func=lambda x: race_display_map[x],
-                    horizontal=True,
-                    label_visibility="collapsed"
-                )
+                # Column Layout to force strict dead-center positioning
+                _, race_center_col, _ = st.columns([1, 4, 1])
+                
+                with race_center_col:
+                    # Hidden anchor text used by CSS to target ONLY this radio group
+                    st.caption("RaceSelectorAnchor")
+                    selected_raw_key = st.radio(
+                        "RaceSelectorAnchor",
+                        raw_keys,
+                        format_func=lambda x: race_display_map[x],
+                        horizontal=True
+                    )
                 
                 if selected_raw_key:
                     race_horses = race_database.get(selected_raw_key, [])
@@ -299,9 +364,9 @@ if selected_page == "📊 Live Race Fields & Ratings":
 # ------------------------------------------------------------------------------
 # PAGE 2: USER CATEGORY SLIDER SETTINGS
 # ------------------------------------------------------------------------------
-elif selected_page == "🎛️ Adjust Slider Settings":
-    st.subheader("🎛️ Category Calculation Factors")
-    st.write("Adjust weighting factors (0.00 to 2.00) applied to each performance category:")
+elif selected_page == "Adjust Slider Settings":
+    st.markdown('<div class="slider-header-centered">Category Adjustment</div>', unsafe_allow_html=True)
+    st.markdown('<div class="slider-subtitle-centered">Category adjustment values can be adjusted from 0.00 to 2.00.</div>', unsafe_allow_html=True)
     st.divider()
 
     st.session_state["u_jockey"]  = st.slider("Jockey Value Multiplier", 0.0, 2.0, float(st.session_state["u_jockey"]), step=0.05)
@@ -314,7 +379,7 @@ elif selected_page == "🎛️ Adjust Slider Settings":
 # ------------------------------------------------------------------------------
 # PAGE 3: ADMIN CALIBRATION PANEL
 # ------------------------------------------------------------------------------
-elif selected_page == "🔒 Admin Calibration Panel":
+elif selected_page == "Admin Calibration Panel":
     st.subheader("🔒 Master Core Calibration")
     st.write("Master system-wide baseline adjustments:")
     st.divider()
