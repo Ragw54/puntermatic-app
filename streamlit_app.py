@@ -6,7 +6,7 @@ import os
 st.set_page_config(page_title="Puntermatic", page_icon="🏇", layout="wide")
 
 # ------------------------------------------------------------------------------
-# CUSTOM CSS: STYLING & HORIZONTAL RACE PILL SELECTOR
+# CUSTOM CSS: STYLING & 3-COLUMN RACE BUTTON GRID
 # ------------------------------------------------------------------------------
 st.markdown("""
     <style>
@@ -31,32 +31,42 @@ st.markdown("""
     
     /* Race Selection Label */
     .race-select-label {
-        font-size: 1.35rem !important;
+        font-size: 1.25rem !important;
         font-weight: 400 !important;
         color: #216bd1 !important;
         margin-bottom: 6px !important;
     }
     
-    /* Horizontal Race Selection Radio Buttons (Forced #216bd1 Color and Large Size) */
+    /* Hide Default Radio Label */
     div[data-testid="stRadio"] > label {
-        display: none !important; /* Hide duplicate label */
+        display: none !important;
     }
+    
+    /* 3-COLUMN GRID FOR RACE BUTTONS */
     div[data-testid="stRadio"] div[role="radiogroup"] {
-        display: flex !important;
-        flex-wrap: wrap !important;
+        display: grid !important;
+        grid-template-columns: repeat(3, 1fr) !important; /* 3 Equal Columns */
         gap: 8px !important;
+        width: 100% !important;
     }
+    
+    /* Smaller Compact Race Buttons */
     div[data-testid="stRadio"] div[role="radiogroup"] label {
         background-color: #F1F5F9 !important;
         border: 2px solid #216bd1 !important;
-        border-radius: 8px !important;
-        padding: 8px 16px !important;
+        border-radius: 6px !important;
+        padding: 6px 4px !important; /* Reduced padding to fit 3-across easily */
+        text-align: center !important;
+        justify-content: center !important;
         cursor: pointer !important;
+        margin: 0 !important;
     }
+    
     div[data-testid="stRadio"] div[role="radiogroup"] label p {
-        font-size: 1.6rem !important;
+        font-size: 1.25rem !important; /* Compact readable font size */
         font-weight: 700 !important;
         color: #216bd1 !important;
+        margin: 0 !important;
     }
     
     /* Section Subheaders ("Race 1") */
@@ -191,7 +201,7 @@ if selected_page == "📊 Live Race Fields & Ratings":
                 # Render label
                 st.markdown('<div class="race-select-label">Select Race</div>', unsafe_allow_html=True)
                 
-                # Render Race Selection Pills
+                # Render 3-Column Grid Race Selection Buttons
                 selected_raw_key = st.radio(
                     "Select Race",
                     raw_keys,
