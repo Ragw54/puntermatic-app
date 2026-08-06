@@ -78,12 +78,12 @@ st.markdown("""
         background-color: #F1F5F9 !important;
         border: 2px solid #216bd1 !important;
         border-radius: 8px !important;
-        padding: 8px 0px !important;
+        padding: 4px 0px !important;
         text-align: center !important;
         justify-content: center !important;
         cursor: pointer !important;
         margin: 0 !important;
-        width: 100% !important;
+        width: 150% !important;
     }
     
     div[data-testid="stMainBlockContainer"] div[data-testid="stRadio"] div[role="radiogroup"] label p {
