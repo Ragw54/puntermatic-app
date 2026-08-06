@@ -44,18 +44,27 @@ st.markdown("""
         color: #216bd1 !important;
     }
     
-    /* Selectbox Label and Larger Selectbox Text */
+    /* Selectbox Label ("Select Race") & Dropdown Menu Text (Race 1 to 10) */
     .stSelectbox label {
+        font-size: 2.2rem !important;
+        font-weight: 800 !important;
+        color: #216bd1 !important;
+    }
+    div[data-baseweb="select"] div {
         font-size: 1.8rem !important;
         font-weight: 700 !important;
         color: #216bd1 !important;
     }
-    div[data-baseweb="select"] div {
-        font-size: 1.4rem !important;
-        font-weight: 700 !important;
-        color: #216bd1 !important;
-    }
     
+    /* Race Distance Display Text */
+    .race-distance-display {
+        font-size: 1.6rem !important;
+        font-weight: 800 !important;
+        color: #216bd1 !important;
+        margin-top: 8px !important;
+        margin-bottom: 8px !important;
+    }
+
     /* Enlarge Slider Labels */
     .stSlider label {
         font-size: 1.25rem !important;
@@ -125,7 +134,6 @@ st.markdown("""
 st.markdown("""
     <div class="punter-header-container">
         <div class="punter-title">PUNTERMATIC</div>
-       
     </div>
 """, unsafe_allow_html=True)
 
@@ -198,7 +206,7 @@ if selected_page == "📊 Live Race Fields & Ratings":
                         race_distance = race_horses[0].get("current_distance", race_horses[0].get("Current Distance", "N/A"))
                         
                         st.subheader(f"{race_display_map[selected_raw_key]}")
-                        st.markdown(f"**Current Race Distance: {race_distance}m**")
+                        st.markdown(f'<div class="race-distance-display">Race Distance: {race_distance}m</div>', unsafe_allow_html=True)
                         st.write("---")
 
                         # Detect if any user or admin slider has been modified from default (1.0)
