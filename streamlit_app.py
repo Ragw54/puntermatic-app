@@ -91,7 +91,7 @@ st.markdown("""
     .stExpander > details > summary {
         background-color: #1E3A8A !important;
         color: #FFD700 !important; /* Bright Yellow */
-        font-size: 1.3rem !important;
+        font-size: 1.5rem !important;
         font-weight: 800 !important;
         border-radius: 6px !important;
         padding: 10px 14px !important;
