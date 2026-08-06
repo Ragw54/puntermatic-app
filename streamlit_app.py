@@ -6,7 +6,7 @@ import os
 st.set_page_config(page_title="Puntermatic", page_icon="🏇", layout="wide")
 
 # ------------------------------------------------------------------------------
-# CUSTOM CSS: HIGH-SPECIFICITY OVERRIDES FOR SELECTBOX & RACE DISTANCE
+# CUSTOM CSS: STYLING & HIGH-SPECIFICITY OVERRIDES
 # ------------------------------------------------------------------------------
 st.markdown("""
     <style>
@@ -38,33 +38,30 @@ st.markdown("""
         color: #216bd1 !important;
     }
     
-    /* DIRECT TARGET: "Select Race" Label */
+    /* "Select Race" Subheader Label (UNBOLDED & DECREASED SIZE) */
     div[data-testid="stSelectbox"] label,
-    div[data-testid="stSelectbox"] label p {
-        font-size: 2.2rem !important;
-        font-weight: 800 !important;
+    div[data-testid="stSelectbox"] label * {
+        font-size: 1.35rem !important;
+        font-weight: 400 !important; /* Unbolded */
         color: #216bd1 !important;
         line-height: 1.2 !important;
     }
     
-    /* DIRECT TARGET: Text inside the Dropdown Box ("Race 1") */
-    div[data-testid="stSelectbox"] div[role="combobox"],
-    div[data-testid="stSelectbox"] div[role="combobox"] span,
-    div[data-testid="stSelectbox"] div[data-baseweb="select"] p {
-        font-size: 1.8rem !important;
+    /* DIRECT TARGET: Dropdown Selection Box ("Race 1" Box) Text Size & Color */
+    div[data-testid="stSelectbox"] div[data-baseweb="select"] * {
+        font-size: 1.7rem !important;
         font-weight: 700 !important;
         color: #216bd1 !important;
     }
     
-    /* DIRECT TARGET: Items in the Pop-up Menu (Race 1 to 10) */
-    ul[data-baseweb="menu"] li span,
-    div[data-baseweb="popover"] li {
-        font-size: 1.6rem !important;
+    /* DIRECT TARGET: Items inside Pop-up Menu (Race 1 to 10) */
+    div[data-baseweb="popover"] * {
+        font-size: 1.5rem !important;
         font-weight: 700 !important;
         color: #216bd1 !important;
     }
     
-    /* Race Distance Display Text (Slightly Decreased as Requested) */
+    /* Race Distance Display Text (Unbolded) */
     .race-distance-display {
         font-size: 1.35rem !important;
         font-weight: 400 !important; /* Regular Weight / Unbolded */
