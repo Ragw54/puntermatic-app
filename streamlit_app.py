@@ -6,7 +6,7 @@ import os
 st.set_page_config(page_title="Puntermatic", page_icon="🏇", layout="wide")
 
 # ------------------------------------------------------------------------------
-# CUSTOM CSS: STYLING, SOLID BLUE/YELLOW CARDS & BOLD TABLE HEADERS
+# CUSTOM CSS: HIGH-SPECIFICITY OVERRIDES FOR SELECTBOX & RACE DISTANCE
 # ------------------------------------------------------------------------------
 st.markdown("""
     <style>
@@ -25,49 +25,51 @@ st.markdown("""
     .punter-title {
         font-size: 2.8rem !important;
         font-weight: 900 !important;
-        color: #216bd1 !important; /* Deep Racing Blue */
+        color: #216bd1 !important;
         letter-spacing: 1px !important;
         margin-bottom: 2px !important;
         line-height: 1.1 !important;
     }
-    .punter-subtitle {
-        font-size: 1.5rem !important;
-        font-weight: 500 !important;
-        color: #216bd1 !important; /* Slate Gray */
-        margin-top: 0px !important;
-    }
     
-    /* Section Subheaders */
+    /* Section Subheaders ("Race 1") */
     h2, h3, .stSubheader {
         font-size: 1.8rem !important;
         font-weight: 700 !important;
         color: #216bd1 !important;
     }
     
-    /* Selectbox Label ("Select Race") directly under PUNTERMATIC Header */
-    .stSelectbox label {
-        font-size: 2.6rem !important;
+    /* DIRECT TARGET: "Select Race" Label */
+    div[data-testid="stSelectbox"] label,
+    div[data-testid="stSelectbox"] label p {
+        font-size: 2.2rem !important;
         font-weight: 800 !important;
         color: #216bd1 !important;
+        line-height: 1.2 !important;
     }
     
-    /* Dropdown Selection Box Text & Items Inside (Race 1 to 10) */
-    div[data-baseweb="select"] div, div[data-baseweb="select"] span {
-        font-size: 2.2rem !important;
+    /* DIRECT TARGET: Text inside the Dropdown Box ("Race 1") */
+    div[data-testid="stSelectbox"] div[role="combobox"],
+    div[data-testid="stSelectbox"] div[role="combobox"] span,
+    div[data-testid="stSelectbox"] div[data-baseweb="select"] p {
+        font-size: 1.8rem !important;
         font-weight: 700 !important;
         color: #216bd1 !important;
     }
-    ul[data-baseweb="menu"] li {
-        font-size: 2.0rem !important;
+    
+    /* DIRECT TARGET: Items in the Pop-up Menu (Race 1 to 10) */
+    ul[data-baseweb="menu"] li span,
+    div[data-baseweb="popover"] li {
+        font-size: 1.6rem !important;
+        font-weight: 700 !important;
         color: #216bd1 !important;
     }
     
-    /* Race Distance Display Text (Unbolded) */
+    /* Race Distance Display Text (Slightly Decreased as Requested) */
     .race-distance-display {
-        font-size: 1.6rem !important;
+        font-size: 1.35rem !important;
         font-weight: 400 !important; /* Regular Weight / Unbolded */
         color: #216bd1 !important;
-        margin-top: 8px !important;
+        margin-top: 4px !important;
         margin-bottom: 8px !important;
     }
 
@@ -95,7 +97,7 @@ st.markdown("""
         cursor: pointer;
     }
     
-    /* STYLED HORSE CARDS: DEEP BLUE FILL WITH BRIGHT YELLOW TEXT */
+    /* HORSE CARDS: DEEP BLUE FILL WITH BRIGHT YELLOW TEXT */
     .stExpander {
         border: 2px solid #1E3A8A !important;
         border-radius: 8px !important;
@@ -105,17 +107,17 @@ st.markdown("""
     }
     .stExpander > details > summary {
         background-color: #1E3A8A !important;
-        color: #FFD700 !important; /* Bright Yellow */
+        color: #FFD700 !important;
         font-size: 1.8rem !important;
         font-weight: 800 !important;
         border-radius: 6px !important;
         padding: 10px 14px !important;
     }
     .stExpander > details > summary * {
-        color: #FFD700 !important; /* Ensure child spans/markdown are bright yellow */
+        color: #FFD700 !important;
     }
     
-    /* Expander Inner Content Area (White background for start history tables) */
+    /* Expander Inner Content Area */
     .stExpander > details > div {
         background-color: #FFFFFF !important;
         color: #216bd1 !important;
