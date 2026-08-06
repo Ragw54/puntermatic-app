@@ -64,7 +64,7 @@ st.markdown("""
         grid-template-columns: repeat(3, 1fr) !important;
         gap: 28px !important;
         width: 100% !important;
-        max-width: 800px !important;
+        max-width: 1200px !important;
         margin: 0 auto !important;
     }
     
