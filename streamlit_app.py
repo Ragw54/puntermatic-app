@@ -6,21 +6,19 @@ import os
 st.set_page_config(page_title="Puntermatic", page_icon="🏇", layout="wide")
 
 # ------------------------------------------------------------------------------
-# CUSTOM CSS: STYLING & HIGH-SPECIFICITY OVERRIDES
+# CUSTOM CSS: STYLING & HORIZONTAL RACE PILL SELECTOR
 # ------------------------------------------------------------------------------
 st.markdown("""
     <style>
-    /* Prevent taskbar clipping while keeping high placement */
     .block-container {
         padding-top: 2rem !important;
         padding-bottom: 1rem !important;
     }
     
-    /* Centered Header Section */
     .punter-header-container {
         text-align: center !important;
         margin-top: 15px !important;
-        margin-bottom: 20px !important;
+        margin-bottom: 15px !important;
     }
     .punter-title {
         font-size: 2.8rem !important;
@@ -31,6 +29,36 @@ st.markdown("""
         line-height: 1.1 !important;
     }
     
+    /* Race Selection Label */
+    .race-select-label {
+        font-size: 1.35rem !important;
+        font-weight: 400 !important;
+        color: #216bd1 !important;
+        margin-bottom: 6px !important;
+    }
+    
+    /* Horizontal Race Selection Radio Buttons (Forced #216bd1 Color and Large Size) */
+    div[data-testid="stRadio"] > label {
+        display: none !important; /* Hide duplicate label */
+    }
+    div[data-testid="stRadio"] div[role="radiogroup"] {
+        display: flex !important;
+        flex-wrap: wrap !important;
+        gap: 8px !important;
+    }
+    div[data-testid="stRadio"] div[role="radiogroup"] label {
+        background-color: #F1F5F9 !important;
+        border: 2px solid #216bd1 !important;
+        border-radius: 8px !important;
+        padding: 8px 16px !important;
+        cursor: pointer !important;
+    }
+    div[data-testid="stRadio"] div[role="radiogroup"] label p {
+        font-size: 1.6rem !important;
+        font-weight: 700 !important;
+        color: #216bd1 !important;
+    }
+    
     /* Section Subheaders ("Race 1") */
     h2, h3, .stSubheader {
         font-size: 1.8rem !important;
@@ -38,60 +66,22 @@ st.markdown("""
         color: #216bd1 !important;
     }
     
-    /* "Select Race" Subheader Label (UNBOLDED & DECREASED SIZE) */
-    div[data-testid="stSelectbox"] label,
-    div[data-testid="stSelectbox"] label * {
-        font-size: 1.35rem !important;
-        font-weight: 400 !important; /* Unbolded */
-        color: #216bd1 !important;
-        line-height: 1.2 !important;
-    }
-    
-    /* DIRECT TARGET: Dropdown Selection Box ("Race 1" Box) Text Size & Color */
-    div[data-testid="stSelectbox"] div[data-baseweb="select"] * {
-        font-size: 1.7rem !important;
-        font-weight: 700 !important;
-        color: #216bd1 !important;
-    }
-    
-    /* DIRECT TARGET: Items inside Pop-up Menu (Race 1 to 10) */
-    div[data-baseweb="popover"] * {
-        font-size: 1.5rem !important;
-        font-weight: 700 !important;
-        color: #216bd1 !important;
-    }
-    
     /* Race Distance Display Text (Unbolded) */
     .race-distance-display {
         font-size: 1.35rem !important;
-        font-weight: 400 !important; /* Regular Weight / Unbolded */
+        font-weight: 400 !important;
         color: #216bd1 !important;
         margin-top: 4px !important;
         margin-bottom: 8px !important;
     }
 
-    /* Enlarge Slider Labels */
-    .stSlider label {
-        font-size: 1.25rem !important;
-        font-weight: 600 !important;
-        color: #216bd1 !important;
-    }
-
-    /* Enlarge Sidebar Navigation Pane & Radio Targets */
+    /* Sidebar Styling */
     section[data-testid="stSidebar"] {
         width: 320px !important;
     }
     section[data-testid="stSidebar"] .stRadio label {
         font-size: 1.35rem !important;
         font-weight: 600 !important;
-        padding-top: 6px !important;
-        padding-bottom: 6px !important;
-    }
-    section[data-testid="stSidebar"] input[type="radio"] {
-        width: 22px !important;
-        height: 22px !important;
-        margin-right: 12px !important;
-        cursor: pointer;
     }
     
     /* HORSE CARDS: DEEP BLUE FILL WITH BRIGHT YELLOW TEXT */
@@ -114,7 +104,6 @@ st.markdown("""
         color: #FFD700 !important;
     }
     
-    /* Expander Inner Content Area */
     .stExpander > details > div {
         background-color: #FFFFFF !important;
         color: #216bd1 !important;
@@ -123,7 +112,6 @@ st.markdown("""
         border-bottom-right-radius: 6px !important;
     }
 
-    /* BOLD TABLE HEADERS FOR FORM DATA */
     .stTable table th, div[data-testid="stTable"] th {
         font-weight: 900 !important;
         font-size: 1.5rem !important;
@@ -200,7 +188,17 @@ if selected_page == "📊 Live Race Fields & Ratings":
             else:
                 race_display_map = {k: f"Race {k.replace('R', '').replace('Temp', '')}" for k in raw_keys}
                 
-                selected_raw_key = st.selectbox("Select Race", raw_keys, format_func=lambda x: race_display_map[x])
+                # Render label
+                st.markdown('<div class="race-select-label">Select Race</div>', unsafe_allow_html=True)
+                
+                # Render Race Selection Pills
+                selected_raw_key = st.radio(
+                    "Select Race",
+                    raw_keys,
+                    format_func=lambda x: race_display_map[x],
+                    horizontal=True,
+                    label_visibility="collapsed"
+                )
                 
                 if selected_raw_key:
                     race_horses = race_database.get(selected_raw_key, [])
@@ -214,10 +212,7 @@ if selected_page == "📊 Live Race Fields & Ratings":
                         st.markdown(f'<div class="race-distance-display">Race Distance: {race_distance}m</div>', unsafe_allow_html=True)
                         st.write("---")
 
-                        # Detect if any user or admin slider has been modified from default (1.0)
-                        sliders_modified = any(
-                            st.session_state[k] != 1.0 for k in slider_keys
-                        )
+                        sliders_modified = any(st.session_state[k] != 1.0 for k in slider_keys)
                         rating_label_prefix = "Adjusted Rating" if sliders_modified else "Rating"
                         
                         calculated_field = []
