@@ -46,10 +46,81 @@ st.markdown("""
     /* -------------------------------------------------------------------------
        MAIN PAGE RACE SELECTOR (3 ACROSS, CENTERED, CLEAN BUTTONS)
        ------------------------------------------------------------------------- */
+  # ------------------------------------------------------------------------------
+# CUSTOM CSS: STYLING, CENTERED 3-COLUMN RACE GRID & BLUE SLIDERS
+# ------------------------------------------------------------------------------
+st.markdown("""
+    <style>
+    /* ... your other CSS rules above ... */
+
+    /* -------------------------------------------------------------------------
+       MAIN PAGE RACE SELECTOR (3 ACROSS, CENTERED, CLEAN BUTTONS)
+       ------------------------------------------------------------------------- */
     /* Hide label of main page radio */
     div[data-testid="stMainBlockContainer"] div[data-testid="stRadio"] > label {
         display: none !important;
     }
+    
+    /* 1. OUTER CONTAINER: Force parent container to center content */
+    div[data-testid="stMainBlockContainer"] div[data-testid="stRadio"] {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;     /* Locks grid dead-center */
+        justify-content: center !important;
+        width: 100% !important;
+    }
+    
+    /* 2. INNER RADIOGROUP GRID: Controls max width & centering */
+    div[data-testid="stMainBlockContainer"] div[data-testid="stRadio"] div[role="radiogroup"] {
+        display: grid !important;
+        grid-template-columns: repeat(3, 1fr) !important; /* 3 equal columns */
+        gap: 8px !important;                               /* Gap between buttons */
+        width: 100% !important;
+        max-width: 480px !important;                      /* <--- ADJUST THIS TO MAKE BUTTONS WIDER/NARROWER */
+        margin-left: auto !important;
+        margin-right: auto !important;
+        justify-content: center !important;
+    }
+    
+    /* Hide radio circle target inside race buttons */
+    div[data-testid="stMainBlockContainer"] div[data-testid="stRadio"] div[role="radiogroup"] input[type="radio"] {
+        display: none !important;
+    }
+    
+    /* Rectangular Race Buttons */
+    div[data-testid="stMainBlockContainer"] div[data-testid="stRadio"] div[role="radiogroup"] label {
+        background-color: #F1F5F9 !important;
+        border: 2px solid #216bd1 !important;
+        border-radius: 8px !important;
+        padding: 8px 0px !important;          /* <--- ADJUST THIS FOR BUTTON HEIGHT */
+        text-align: center !important;
+        justify-content: center !important;
+        cursor: pointer !important;
+        margin: 0 !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
+    }
+    
+    div[data-testid="stMainBlockContainer"] div[data-testid="stRadio"] div[role="radiogroup"] label p {
+        font-size: 1.25rem !important;
+        font-weight: 700 !important;
+        color: #216bd1 !important;
+        margin: 0 !important;
+        text-align: center !important;
+    }
+    
+    /* Active Selected Race Button */
+    div[data-testid="stMainBlockContainer"] div[data-testid="stRadio"] div[role="radiogroup"] label:has(input:checked) {
+        background-color: #216bd1 !important;
+        border-color: #216bd1 !important;
+    }
+    div[data-testid="stMainBlockContainer"] div[data-testid="stRadio"] div[role="radiogroup"] label:has(input:checked) p {
+        color: #FFFFFF !important;
+    }
+
+    /* ... your remaining CSS rules below ... */
+    </style>
+""", unsafe_allow_html=True)
     
     /* Center radio container */
     div[data-testid="stMainBlockContainer"] div[data-testid="stRadio"] {
