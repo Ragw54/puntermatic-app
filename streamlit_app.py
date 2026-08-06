@@ -44,22 +44,28 @@ st.markdown("""
         color: #216bd1 !important;
     }
     
-    /* Selectbox Label ("Select Race") & Dropdown Menu Text (Race 1 to 10) */
+    /* Selectbox Label ("Select Race") directly under PUNTERMATIC Header */
     .stSelectbox label {
-        font-size: 2.2rem !important;
+        font-size: 2.6rem !important;
         font-weight: 800 !important;
-        color: #216bd1 !important;
-    }
-    div[data-baseweb="select"] div {
-        font-size: 1.8rem !important;
-        font-weight: 700 !important;
         color: #216bd1 !important;
     }
     
-    /* Race Distance Display Text */
+    /* Dropdown Selection Box Text & Items Inside (Race 1 to 10) */
+    div[data-baseweb="select"] div, div[data-baseweb="select"] span {
+        font-size: 2.2rem !important;
+        font-weight: 700 !important;
+        color: #216bd1 !important;
+    }
+    ul[data-baseweb="menu"] li {
+        font-size: 2.0rem !important;
+        color: #216bd1 !important;
+    }
+    
+    /* Race Distance Display Text (Unbolded) */
     .race-distance-display {
         font-size: 1.6rem !important;
-        font-weight: 800 !important;
+        font-weight: 400 !important; /* Regular Weight / Unbolded */
         color: #216bd1 !important;
         margin-top: 8px !important;
         margin-bottom: 8px !important;
