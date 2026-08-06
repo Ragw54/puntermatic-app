@@ -125,7 +125,7 @@ st.markdown("""
 st.markdown("""
     <div class="punter-header-container">
         <div class="punter-title">PUNTERMATIC</div>
-        <div class="punter-subtitle">Race Selection</div>
+       
     </div>
 """, unsafe_allow_html=True)
 
