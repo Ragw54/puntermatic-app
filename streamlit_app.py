@@ -91,7 +91,7 @@ st.markdown("""
     .stExpander > details > summary {
         background-color: #1E3A8A !important;
         color: #FFD700 !important; /* Bright Yellow */
-        font-size: 1.5rem !important;
+        font-size: 1.8rem !important;
         font-weight: 800 !important;
         border-radius: 6px !important;
         padding: 10px 14px !important;
@@ -112,7 +112,7 @@ st.markdown("""
     /* BOLD TABLE HEADERS FOR FORM DATA */
     .stTable table th, div[data-testid="stTable"] th {
         font-weight: 800 !important;
-        font-size: 1.1rem !important;
+        font-size: 1.3rem !important;
         color: #216bd1 !important;
         background-color: #F1F5F9 !important;
     }
