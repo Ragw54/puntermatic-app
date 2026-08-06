@@ -6,7 +6,7 @@ import os
 st.set_page_config(page_title="Puntermatic", page_icon="🏇", layout="wide")
 
 # ------------------------------------------------------------------------------
-# CUSTOM CSS: STYLING, CENTERED 3-COLUMN RACE GRID & SIDE-BY-SIDE HEADER
+# CUSTOM CSS: STYLING, FORCED CENTERED 3-COLUMN RACE GRID & SIDE-BY-SIDE HEADER
 # ------------------------------------------------------------------------------
 st.markdown("""
     <style>
@@ -36,11 +36,20 @@ st.markdown("""
         color: #216bd1 !important;
         margin-bottom: 6px !important;
         text-align: center !important;
+        width: 100% !important;
     }
     
     /* Hide Default Radio Label */
     div[data-testid="stRadio"] > label {
         display: none !important;
+    }
+    
+    /* FORCE CENTER ALIGNMENT ON THE ENTIRE RADIO CONTAINER */
+    div[data-testid="stRadio"] {
+        display: flex !important;
+        justify-content: center !important;
+        align-items: center !important;
+        width: 100% !important;
     }
     
     /* CENTERED 3-COLUMN GRID FOR RACE BUTTONS */
@@ -49,8 +58,10 @@ st.markdown("""
         grid-template-columns: repeat(3, 1fr) !important;
         gap: 8px !important;
         width: 100% !important;
-        max-width: 600px !important; /* Limits width to keep grid nicely centered */
-        margin: 0 auto !important; /* Centers grid horizontally */
+        max-width: 500px !important; /* Kept compact so it centers cleanly */
+        margin: 0 auto !important;
+        justify-content: center !important;
+        justify-items: center !important;
     }
     
     /* Compact Race Buttons */
@@ -63,6 +74,7 @@ st.markdown("""
         justify-content: center !important;
         cursor: pointer !important;
         margin: 0 !important;
+        width: 100% !important;
     }
     
     div[data-testid="stRadio"] div[role="radiogroup"] label p {
@@ -70,6 +82,7 @@ st.markdown("""
         font-weight: 700 !important;
         color: #216bd1 !important;
         margin: 0 !important;
+        text-align: center !important;
     }
     
     /* SIDE-BY-SIDE RACE TITLE & DISTANCE ROW */
