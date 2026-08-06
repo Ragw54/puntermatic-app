@@ -62,7 +62,7 @@ st.markdown("""
     div[data-testid="stMainBlockContainer"] div[data-testid="stRadio"] div[role="radiogroup"] {
         display: grid !important;
         grid-template-columns: repeat(3, 1fr) !important;
-        gap: 16px !important;
+        gap: 28px !important;
         width: 100% !important;
         max-width: 800px !important;
         margin: 0 auto !important;
