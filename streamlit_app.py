@@ -24,7 +24,7 @@ st.markdown("""
     .punter-header-container {
         text-align: center !important;
         margin-top: 5px !important;
-        margin-bottom: 10px !important;
+        margin-bottom: 5px !important;
     }
     
     /* PUNTERMATIC MAIN TITLE */
@@ -46,6 +46,24 @@ st.markdown("""
         margin-bottom: 10px !important;
         text-align: center !important;
         width: 100% !important;
+    }
+
+    /* CUSTOM NAVIGATION BUTTON STYLING */
+    div.stButton > button {
+        background-color: #216bd1 !important;
+        color: #FFFFFF !important;
+        border: none !important;
+        font-weight: 700 !important;
+        font-size: 1.1rem !important;
+        border-radius: 8px !important;
+        padding: 8px 16px !important;
+        margin: 0 auto !important;
+        display: block !important;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1) !important;
+    }
+    div.stButton > button:hover {
+        background-color: #1E3A8A !important;
+        color: #FFD700 !important;
     }
     
     /* -------------------------------------------------------------------------
@@ -234,7 +252,10 @@ st.markdown("""
     </div>
 """, unsafe_allow_html=True)
 
-# Initialize default session state values for all 6 core metrics
+# Initialize default session state values for active page & core metrics
+if "nav_page" not in st.session_state:
+    st.session_state["nav_page"] = "Live Race Fields & Ratings"
+
 slider_keys = [
     "u_jockey", "u_trainer", "u_class", "u_barrier", "u_stats", "u_weight",
     "a_jockey", "a_trainer", "a_class", "a_barrier", "a_stats", "a_weight"
@@ -258,7 +279,9 @@ with st.sidebar.expander("⚙️ Master System Access"):
 if st.session_state["admin_authenticated"]:
     pages.append("Admin Calibration Panel")
 
-selected_page = st.sidebar.radio("Navigation Menu", pages, label_visibility="collapsed")
+# Sync radio with session state nav_page
+selected_page = st.sidebar.radio("Navigation Menu", pages, index=pages.index(st.session_state["nav_page"]) if st.session_state["nav_page"] in pages else 0, key="sidebar_radio", label_visibility="collapsed")
+st.session_state["nav_page"] = selected_page
 
 # Dynamic Database Locator
 user_prof = os.environ.get("USERPROFILE", "")
@@ -277,7 +300,14 @@ for p in possible_paths:
 # ------------------------------------------------------------------------------
 # PAGE 1: LIVE RACE FIELDS & RATINGS
 # ------------------------------------------------------------------------------
-if selected_page == "Live Race Fields & Ratings":
+if st.session_state["nav_page"] == "Live Race Fields & Ratings":
+    # NAVIGATION SHORTCUT BUTTON
+    col1, col2, col3 = st.columns([1, 2, 1])
+    with col2:
+        if st.button("⚙️ Go to Category Adjustment Menu", use_container_width=True):
+            st.session_state["nav_page"] = "Adjust Slider Settings"
+            st.rerun()
+
     if not json_path:
         st.error("❌ Database file `Full_Puntermatic_Migration.json` was not found.")
         st.info("Please verify that `Full_Puntermatic_Migration.json` is uploaded to your GitHub repository.")
@@ -371,7 +401,13 @@ if selected_page == "Live Race Fields & Ratings":
 # ------------------------------------------------------------------------------
 # PAGE 2: USER CATEGORY SLIDER SETTINGS
 # ------------------------------------------------------------------------------
-elif selected_page == "Adjust Slider Settings":
+elif st.session_state["nav_page"] == "Adjust Slider Settings":
+    col1, col2, col3 = st.columns([1, 2, 1])
+    with col2:
+        if st.button("🏇 Back to Live Race Fields", use_container_width=True):
+            st.session_state["nav_page"] = "Live Race Fields & Ratings"
+            st.rerun()
+
     st.markdown('<div class="slider-header-centered">Category Adjustment</div>', unsafe_allow_html=True)
     st.markdown('<div class="slider-subtitle-centered">Category adjustment values can be adjusted from 0.00 to 2.00.</div>', unsafe_allow_html=True)
     st.divider()
@@ -386,7 +422,13 @@ elif selected_page == "Adjust Slider Settings":
 # ------------------------------------------------------------------------------
 # PAGE 3: ADMIN CALIBRATION PANEL
 # ------------------------------------------------------------------------------
-elif selected_page == "Admin Calibration Panel":
+elif st.session_state["nav_page"] == "Admin Calibration Panel":
+    col1, col2, col3 = st.columns([1, 2, 1])
+    with col2:
+        if st.button("🏇 Back to Live Race Fields", use_container_width=True):
+            st.session_state["nav_page"] = "Live Race Fields & Ratings"
+            st.rerun()
+
     st.subheader("🔒 Master Core Calibration")
     st.write("Master system-wide baseline adjustments:")
     st.divider()
