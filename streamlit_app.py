@@ -6,41 +6,36 @@ import os
 st.set_page_config(page_title="Puntermatic", page_icon="🏇", layout="wide")
 
 # ------------------------------------------------------------------------------
-# CUSTOM CSS: STYLING, LOCKED CENTERED 3-COLUMN RACE GRID & BLUE SLIDERS
+# CUSTOM CSS & JS: HIDE TOP TASKBAR & FULL-SCREEN CLEANUP
 # ------------------------------------------------------------------------------
 st.markdown("""
     <style>
-    /* Prevent taskbar clipping while keeping high placement */
-    .block-container {
-        padding-top: 1.2rem !important;
-        padding-bottom: 1rem !important;
-    }
-
-   /* -------------------------------------------------------------------------
-       HIDE TOP TOOLBAR ICONS (Fork, GitHub, 3 Dots) BUT KEEP TOGGLE ARROW
-       ------------------------------------------------------------------------- */
-    /* Target all Streamlit toolbar menu container variations */
-    [data-testid="stToolbar"],
-    div[data-testid="stToolbar"],
-    [data-testid="stHeader"] > div:nth-child(2) {
+    /* Force hide any header elements rendered inside the app DOM */
+    header, [data-testid="stHeader"], [data-testid="stAppHeader"], div[data-testid="stToolbar"] {
         display: none !important;
+        height: 0px !important;
         visibility: hidden !important;
     }
-
-    /* Hide top decorative line */
-    [data-testid="stDecoration"],
-    div[data-testid="stDecoration"] {
-        display: none !important;
+    
+    /* Pull content to the very top of the browser viewport */
+    .block-container {
+        padding-top: 0.5rem !important;
+        padding-bottom: 1rem !important;
     }
+    </style>
 
-    /* Transparent header background so toggle arrow floats cleanly */
-    header[data-testid="stHeader"],
-    [data-testid="stHeader"],
-    [data-testid="stAppHeader"] {
-        background: transparent !important;
-        background-color: transparent !important;
-    }
-
+    <script>
+    /* JavaScript fallback to remove top frame elements if rendered outside main DOM */
+    const removeHeader = () => {
+        const header = window.parent.document.querySelector('header');
+        if (header) { header.style.display = 'none'; }
+        const toolbar = window.parent.document.querySelector('[data-testid="stToolbar"]');
+        if (toolbar) { toolbar.style.display = 'none'; }
+    };
+    setTimeout(removeHeader, 300);
+    setInterval(removeHeader, 1000);
+    </script>
+""", unsafe_allow_html=True)
     /* Add "Navigation Menu" label next to the sidebar toggle button */
     button[data-testid="stHeaderNavStateToggle"]::after,
     [data-testid="stSidebarCollapseButton"]::after {
