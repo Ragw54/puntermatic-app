@@ -60,13 +60,13 @@ st.markdown("""
         width: 100% !important;
     }
     
-    /* 2. INNER RADIOGROUP GRID: Controls max width and horizontal centering */
+    /* 2. INNER RADIOGROUP GRID: Controls width and horizontal centering */
     div[data-testid="stMainBlockContainer"] div[data-testid="stRadio"] div[role="radiogroup"] {
         display: grid !important;
         grid-template-columns: repeat(3, 1fr) !important; /* 3 equal columns */
         gap: 8px !important;                               /* Gap between buttons */
-        width: 100% !important;
-        max-width: 600px !important;                      /* ADJUST THIS TO MAKE GRID WIDER/NARROWER */
+        width: 600px !important;                          /* EDIT THIS VALUE TO CHANGE GRID WIDTH */
+        max-width: 90vw !important;                        /* Ensures fit on mobile screens */
         margin-left: auto !important;                     /* Forces auto left margin */
         margin-right: auto !important;                    /* Forces auto right margin */
         justify-content: center !important;
@@ -82,7 +82,7 @@ st.markdown("""
         background-color: #F1F5F9 !important;
         border: 2px solid #216bd1 !important;
         border-radius: 8px !important;       /* Corner Roundness */
-        padding: 8px 0px !important;          /* ADJUST THIS FOR BUTTON HEIGHT */
+        padding: 8px 0px !important;          /* EDIT THIS VALUE FOR BUTTON HEIGHT */
         text-align: center !important;
         justify-content: center !important;
         cursor: pointer !important;
