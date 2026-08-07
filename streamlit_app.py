@@ -10,6 +10,14 @@ st.set_page_config(page_title="Puntermatic", page_icon="🏇", layout="wide")
 # ------------------------------------------------------------------------------
 st.markdown("""
     <style>
+    /* HIDE STREAMLIT TOP HEADER & NAVIGATION TASKBAR */
+    header[data-testid="stHeader"] {
+        display: none !important;
+    }
+    div[data-testid="stDecoration"] {
+        display: none !important;
+    }
+
     /* Prevent taskbar clipping while keeping high placement */
     .block-container {
         padding-top: 1.2rem !important;
