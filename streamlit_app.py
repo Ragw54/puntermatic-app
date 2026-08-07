@@ -10,18 +10,30 @@ st.set_page_config(page_title="Puntermatic", page_icon="🏇", layout="wide")
 # ------------------------------------------------------------------------------
 st.markdown("""
     <style>
-    /* HIDE STREAMLIT TOP HEADER & NAVIGATION TASKBAR */
-    header[data-testid="stHeader"] {
+    /* Prevent taskbar clipping while keeping high placement */
+    .block-container {
+        padding-top: 1.2rem !important;
+        padding-bottom: 1rem !important;
+    }
+
+    /* HIDE TOP TOOLBAR ICONS (Fork, GitHub, 3 Dots) BUT KEEP TOGGLE ARROW */
+    div[data-testid="stToolbar"] {
         display: none !important;
     }
     div[data-testid="stDecoration"] {
         display: none !important;
     }
+    header[data-testid="stHeader"] {
+        background: transparent !important;
+    }
 
-    /* Prevent taskbar clipping while keeping high placement */
-    .block-container {
-        padding-top: 1.2rem !important;
-        padding-bottom: 1rem !important;
+    /* ADD TEXT LABEL NEXT TO THE TOGGLE ARROWS */
+    button[data-testid="stHeaderNavStateToggle"]::after {
+        content: " Navigation Menu" !important;
+        font-size: 1rem !important;
+        font-weight: 600 !important;
+        color: #216bd1 !important;
+        margin-left: 6px !important;
     }
     
     .punter-header-container {
@@ -44,7 +56,7 @@ st.markdown("""
     /* Race Selection Label under PUNTERMATIC */
     .race-select-label {
         font-size: 1.35rem !important;
-        font-weight: 400 !important; /* Unbolded */
+        font-weight: 400 !important;
         color: #216bd1 !important;
         margin-bottom: 10px !important;
         text-align: center !important;
@@ -54,43 +66,38 @@ st.markdown("""
     /* -------------------------------------------------------------------------
        MAIN PAGE RACE SELECTOR (3 ACROSS, CENTERED, CLEAN BUTTONS)
        ------------------------------------------------------------------------- */
-    /* Hide label of main page radio */
     div[data-testid="stMainBlockContainer"] div[data-testid="stRadio"] > label {
         display: none !important;
     }
     
-    /* 1. OUTER CONTAINER: Force parent container to align content to center */
     div[data-testid="stMainBlockContainer"] div[data-testid="stRadio"] {
         display: flex !important;
         flex-direction: column !important;
-        align-items: center !important;     /* Locks child elements dead-center */
+        align-items: center !important;
         justify-content: center !important;
         width: 100% !important;
     }
     
-    /* 2. INNER RADIOGROUP GRID: Controls width and horizontal centering */
     div[data-testid="stMainBlockContainer"] div[data-testid="stRadio"] div[role="radiogroup"] {
         display: grid !important;
-        grid-template-columns: repeat(3, 1fr) !important; /* 3 equal columns */
-        gap: 8px !important;                               /* Gap between buttons */
-        width: 600px !important;                          /* EDIT THIS VALUE TO CHANGE GRID WIDTH */
-        max-width: 90vw !important;                        /* Ensures fit on mobile screens */
-        margin-left: auto !important;                     /* Forces auto left margin */
-        margin-right: auto !important;                    /* Forces auto right margin */
+        grid-template-columns: repeat(3, 1fr) !important;
+        gap: 8px !important;
+        width: 600px !important;
+        max-width: 90vw !important;
+        margin-left: auto !important;
+        margin-right: auto !important;
         justify-content: center !important;
     }
     
-    /* Hide radio circle target inside race buttons */
     div[data-testid="stMainBlockContainer"] div[data-testid="stRadio"] div[role="radiogroup"] input[type="radio"] {
         display: none !important;
     }
     
-    /* Rectangular Race Buttons */
     div[data-testid="stMainBlockContainer"] div[data-testid="stRadio"] div[role="radiogroup"] label {
         background-color: #F1F5F9 !important;
         border: 2px solid #216bd1 !important;
-        border-radius: 8px !important;       /* Corner Roundness */
-        padding: 8px 0px !important;          /* EDIT THIS VALUE FOR BUTTON HEIGHT */
+        border-radius: 8px !important;
+        padding: 8px 0px !important;
         text-align: center !important;
         justify-content: center !important;
         cursor: pointer !important;
@@ -107,7 +114,6 @@ st.markdown("""
         text-align: center !important;
     }
     
-    /* Active Selected Race Button */
     div[data-testid="stMainBlockContainer"] div[data-testid="stRadio"] div[role="radiogroup"] label:has(input:checked) {
         background-color: #216bd1 !important;
         border-color: #216bd1 !important;
@@ -135,7 +141,6 @@ st.markdown("""
         color: #216bd1 !important;
     }
     
-    /* Recolor Navigation Radio Circles to #216bd1 */
     section[data-testid="stSidebar"] input[type="radio"] {
         accent-color: #216bd1 !important;
         width: 20px !important;
@@ -148,7 +153,7 @@ st.markdown("""
     .slider-header-centered {
         text-align: center !important;
         font-size: 2.2rem !important;
-        font-weight: 400 !important; /* Unbolded */
+        font-weight: 400 !important;
         color: #216bd1 !important;
         margin-top: 0px !important;
         margin-bottom: 4px !important;
@@ -161,14 +166,12 @@ st.markdown("""
         margin-bottom: 15px !important;
     }
     
-    /* Unbolded Multiplier Headers */
     .stSlider label p {
         font-size: 1.35rem !important;
-        font-weight: 400 !important; /* Unbolded */
+        font-weight: 400 !important;
         color: #216bd1 !important;
     }
     
-    /* RECOLOR SLIDER TRACKS, HANDLES & VALUES TO #216bd1 */
     div[data-testid="stSlider"] p,
     div[data-testid="stSlider"] span {
         color: #216bd1 !important;
@@ -181,7 +184,6 @@ st.markdown("""
         border-color: #216bd1 !important;
     }
 
-    /* SIDE-BY-SIDE RACE TITLE & DISTANCE ROW */
     .race-info-header {
         display: flex !important;
         align-items: baseline !important;
@@ -202,7 +204,6 @@ st.markdown("""
         margin: 0 !important;
     }
 
-    /* HORSE CARDS: DEEP BLUE FILL WITH BRIGHT YELLOW TEXT */
     .stExpander {
         border: 2px solid #1E3A8A !important;
         border-radius: 8px !important;
