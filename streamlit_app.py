@@ -16,25 +16,40 @@ st.markdown("""
         padding-bottom: 1rem !important;
     }
 
-    /* HIDE TOP TOOLBAR ICONS (Fork, GitHub, 3 Dots) BUT KEEP TOGGLE ARROW */
-    div[data-testid="stToolbar"] {
+   /* -------------------------------------------------------------------------
+       HIDE TOP TOOLBAR ICONS (Fork, GitHub, 3 Dots) BUT KEEP TOGGLE ARROW
+       ------------------------------------------------------------------------- */
+    /* Target all Streamlit toolbar menu container variations */
+    [data-testid="stToolbar"],
+    div[data-testid="stToolbar"],
+    [data-testid="stHeader"] > div:nth-child(2) {
         display: none !important;
+        visibility: hidden !important;
     }
+
+    /* Hide top decorative line */
+    [data-testid="stDecoration"],
     div[data-testid="stDecoration"] {
         display: none !important;
     }
-    header[data-testid="stHeader"] {
+
+    /* Transparent header background so toggle arrow floats cleanly */
+    header[data-testid="stHeader"],
+    [data-testid="stHeader"],
+    [data-testid="stAppHeader"] {
         background: transparent !important;
+        background-color: transparent !important;
     }
 
-    /* ADD TEXT LABEL NEXT TO THE TOGGLE ARROWS */
-    button[data-testid="stHeaderNavStateToggle"]::after {
+    /* Add "Navigation Menu" label next to the sidebar toggle button */
+    button[data-testid="stHeaderNavStateToggle"]::after,
+    [data-testid="stSidebarCollapseButton"]::after {
         content: " Navigation Menu" !important;
         font-size: 1rem !important;
         font-weight: 600 !important;
         color: #216bd1 !important;
         margin-left: 6px !important;
-    }
+    } 
     
     .punter-header-container {
         text-align: center !important;
