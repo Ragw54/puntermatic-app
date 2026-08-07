@@ -66,7 +66,7 @@ st.markdown("""
         grid-template-columns: repeat(3, 1fr) !important; /* 3 equal columns */
         gap: 8px !important;                               /* Gap between buttons */
         width: 100% !important;
-        max-width: 480px !important;                      /* ADJUST THIS TO MAKE GRID WIDER/NARROWER */
+        max-width: 600px !important;                      /* ADJUST THIS TO MAKE GRID WIDER/NARROWER */
         margin-left: auto !important;                     /* Forces auto left margin */
         margin-right: auto !important;                    /* Forces auto right margin */
         justify-content: center !important;
