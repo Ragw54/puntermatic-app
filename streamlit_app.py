@@ -6,33 +6,21 @@ import os
 st.set_page_config(page_title="Puntermatic", page_icon="🏇", layout="wide")
 
 # ------------------------------------------------------------------------------
-# CUSTOM CSS: STYLING, LOCKED CENTERED 3-COLUMN RACE GRID & BLUE SLIDERS
+# CLEAN CSS FALLBACK: PADDING CLEANUP & IN-APP HEADER HIDING
 # ------------------------------------------------------------------------------
 st.markdown("""
     <style>
-    /* Force hide header DOM elements */
-    header, [data-testid="stHeader"], [data-testid="stAppHeader"], div[data-testid="stToolbar"] {
-        display: none !important;
-        height: 0px !important;
-        visibility: hidden !important;
-    }
-    
-    /* Pull content to the very top of the browser viewport */
+    /* Pull page content up to the top */
     .block-container {
-        padding-top: 0.5rem !important;
+        padding-top: 1rem !important;
         padding-bottom: 1rem !important;
     }
 
-    /* Add "Navigation Menu" label next to the sidebar toggle button */
-    button[data-testid="stHeaderNavStateToggle"]::after,
-    [data-testid="stSidebarCollapseButton"]::after {
-        content: " Navigation Menu" !important;
-        font-size: 1rem !important;
-        font-weight: 600 !important;
-        color: #216bd1 !important;
-        margin-left: 6px !important;
-    } 
-    
+    /* Hide standard internal Streamlit header container */
+    [data-testid="stHeader"] {
+        display: none !important;
+    }
+
     .punter-header-container {
         text-align: center !important;
         margin-top: 5px !important;
@@ -235,22 +223,6 @@ st.markdown("""
         background-color: #F1F5F9 !important;
     }
     </style>
-""", unsafe_allow_html=True)
-
-# ------------------------------------------------------------------------------
-# JAVASCRIPT: HIDE TOP TASKBAR IN HOSTED IFRAME VIEW
-# ------------------------------------------------------------------------------
-st.markdown("""
-    <script>
-    const removeHeader = () => {
-        const header = window.parent.document.querySelector('header');
-        if (header) { header.style.display = 'none'; }
-        const toolbar = window.parent.document.querySelector('[data-testid="stToolbar"]');
-        if (toolbar) { toolbar.style.display = 'none'; }
-    };
-    setTimeout(removeHeader, 300);
-    setInterval(removeHeader, 1000);
-    </script>
 """, unsafe_allow_html=True)
 
 # ------------------------------------------------------------------------------
