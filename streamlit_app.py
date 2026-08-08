@@ -12,7 +12,7 @@ st.markdown("""
     <style>
     /* Pull page content up to the top */
     .block-container {
-        padding-top: 0.5rem !important;
+        padding-top: 0.1rem !important;
         padding-bottom: 1rem !important;
     }
 
@@ -24,8 +24,8 @@ st.markdown("""
     /* TOP ROW: LEFT MENU BUTTON & PUNTERMATIC HEADER */
     .punter-header-container {
         text-align: center !important;
-        margin-top: 2px !important;
-        margin-bottom: 5px !important;
+        margin-top: 0px !important;
+        margin-bottom: 2px !important;
     }
     
     /* PUNTERMATIC MAIN TITLE */
@@ -44,6 +44,7 @@ st.markdown("""
         font-size: 1.35rem !important;
         font-weight: 400 !important;
         color: #216bd1 !important;
+        margin-top: 0px !important;
         margin-bottom: 10px !important;
         text-align: center !important;
         width: 100% !important;
@@ -337,7 +338,7 @@ if st.session_state["nav_page"] == "Live Race Fields & Ratings":
                 
                 # Render 3-Column Centered Race Buttons
                 selected_raw_key = st.radio(
-                    "Race Selection",
+                    "Select Race",
                     raw_keys,
                     format_func=lambda x: race_display_map[x],
                     horizontal=True
