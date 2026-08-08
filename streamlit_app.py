@@ -25,7 +25,7 @@ st.markdown("""
 
     /* 3. LIFT MENU BUTTON HIGHER (NEGATIVE MARGIN) */
     .menu-button-container {
-        margin-top: -15px !important;
+        margin-top: -20px !important;
         margin-bottom: 0px !important;
     }
 
