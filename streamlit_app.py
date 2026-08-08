@@ -8,57 +8,35 @@ st.set_page_config(page_title="Puntermatic", page_icon="🏇", layout="wide")
 # ------------------------------------------------------------------------------
 # CLEAN CSS: SMALL LEFT-ALIGNED MENU BUTTON ABOVE PUNTERMATIC HEADER
 # ------------------------------------------------------------------------------
+
 st.markdown("""
     <style>
-    /* Pull page content up to the top */
+    /* 1. COMPLETELY STRIP CONTAINER TOP PADDING */
     .block-container {
-        padding-top: 0.1rem !important;
-        padding-bottom: 1rem !important;
+        padding-top: 0rem !important;
+        padding-bottom: 0.5rem !important;
     }
 
-    /* Hide standard internal Streamlit header container */
+    /* 2. HIDE STREAMLIT INTERNAL HEADER CONTAINER */
     [data-testid="stHeader"] {
         display: none !important;
+        height: 0px !important;
     }
 
-    /* TOP ROW: LEFT MENU BUTTON & PUNTERMATIC HEADER */
-    .punter-header-container {
-        text-align: center !important;
-        margin-top: 0px !important;
-        margin-bottom: 2px !important;
-    }
-    
-    /* PUNTERMATIC MAIN TITLE */
-    .punter-title {
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
-        font-size: 2.8rem !important;
-        font-weight: 900 !important;
-        color: #216bd1 !important;
-        letter-spacing: 1.5px !important;
+    /* 3. LIFT MENU BUTTON HIGHER (NEGATIVE MARGIN) */
+    .menu-button-container {
+        margin-top: -15px !important;
         margin-bottom: 0px !important;
-        line-height: 1.1 !important;
-    }
-    
-    /* Race Selection Label under PUNTERMATIC */
-    .race-select-label {
-        font-size: 1.35rem !important;
-        font-weight: 400 !important;
-        color: #216bd1 !important;
-        margin-top: 0px !important;
-        margin-bottom: 4px !important;
-        text-align: center !important;
-        width: 100% !important;
     }
 
-    /* COMPACT, SMALL LEFT-ALIGNED 'MENU' BUTTON */
     .menu-button-container div.stButton > button {
         background-color: #216bd1 !important;
         color: #FFFFFF !important;
         border: none !important;
         font-weight: 700 !important;
-        font-size: 0.9rem !important;
+        font-size: 0.85rem !important;
         border-radius: 6px !important;
-        padding: 4px 12px !important;
+        padding: 2px 10px !important;
         margin: 0 !important;
         display: inline-block !important;
         box-shadow: 0 2px 4px rgba(0,0,0,0.1) !important;
@@ -70,7 +48,35 @@ st.markdown("""
         background-color: #1E3A8A !important;
         color: #FFD700 !important;
     }
+
+    /* 4. LIFT PUNTERMATIC TITLE HIGHER (NEGATIVE MARGIN) */
+    .punter-header-container {
+        text-align: center !important;
+        margin-top: -10px !important;
+        margin-bottom: 2px !important;
+    }
     
+    .punter-title {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
+        font-size: 2.6rem !important;
+        font-weight: 900 !important;
+        color: #216bd1 !important;
+        letter-spacing: 1.5px !important;
+        margin-bottom: 0px !important;
+        line-height: 1.0 !important;
+    }
+    
+    /* 5. LIFT 'SELECT RACE' SUBHEADER HIGHER */
+    .race-select-label {
+        font-size: 1.25rem !important;
+        font-weight: 400 !important;
+        color: #216bd1 !important;
+        margin-top: -2px !important;
+        margin-bottom: 2px !important;
+        text-align: center !important;
+        width: 100% !important;
+    }
+
     /* -------------------------------------------------------------------------
        MAIN PAGE RACE SELECTOR (3 ACROSS, CENTERED, CLEAN BUTTONS)
        ------------------------------------------------------------------------- */
@@ -247,7 +253,6 @@ st.markdown("""
     }
     </style>
 """, unsafe_allow_html=True)
-
 # Initialize Session State values
 if "nav_page" not in st.session_state:
     st.session_state["nav_page"] = "Live Race Fields & Ratings"
@@ -456,3 +461,4 @@ elif st.session_state["nav_page"] == "Admin Calibration Panel":
     st.session_state["a_barrier"] = st.slider("Master Barrier Multiplier", 0.0, 2.0, float(st.session_state["a_barrier"]), step=0.05)
     st.session_state["a_stats"]   = st.slider("Master Stats Multiplier", 0.0, 2.0, float(st.session_state["a_stats"]), step=0.05)
     st.session_state["a_weight"]  = st.slider("Master Weight Multiplier", 0.0, 2.0, float(st.session_state["a_weight"]), step=0.05)
+    
