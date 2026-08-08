@@ -6,13 +6,13 @@ import os
 st.set_page_config(page_title="Puntermatic", page_icon="🏇", layout="wide")
 
 # ------------------------------------------------------------------------------
-# CLEAN CSS FALLBACK: PADDING CLEANUP & COMPACT MENU BUTTON STYLING
+# CLEAN CSS: SMALL LEFT-ALIGNED MENU BUTTON ABOVE PUNTERMATIC HEADER
 # ------------------------------------------------------------------------------
 st.markdown("""
     <style>
     /* Pull page content up to the top */
     .block-container {
-        padding-top: 1rem !important;
+        padding-top: 0.5rem !important;
         padding-bottom: 1rem !important;
     }
 
@@ -21,9 +21,10 @@ st.markdown("""
         display: none !important;
     }
 
+    /* TOP ROW: LEFT MENU BUTTON & PUNTERMATIC HEADER */
     .punter-header-container {
         text-align: center !important;
-        margin-top: 5px !important;
+        margin-top: 2px !important;
         margin-bottom: 5px !important;
     }
     
@@ -48,20 +49,23 @@ st.markdown("""
         width: 100% !important;
     }
 
-    /* COMPACT 'MENU' BUTTON STYLING */
-    div.stButton > button {
+    /* COMPACT, SMALL LEFT-ALIGNED 'MENU' BUTTON */
+    .menu-button-container div.stButton > button {
         background-color: #216bd1 !important;
         color: #FFFFFF !important;
         border: none !important;
         font-weight: 700 !important;
-        font-size: 1.1rem !important;
-        border-radius: 8px !important;
-        padding: 6px 16px !important;
-        margin: 0 auto !important;
-        display: block !important;
+        font-size: 0.9rem !important;
+        border-radius: 6px !important;
+        padding: 4px 12px !important;
+        margin: 0 !important;
+        display: inline-block !important;
         box-shadow: 0 2px 4px rgba(0,0,0,0.1) !important;
+        width: auto !important;
+        min-height: unset !important;
+        height: auto !important;
     }
-    div.stButton > button:hover {
+    .menu-button-container div.stButton > button:hover {
         background-color: #1E3A8A !important;
         color: #FFD700 !important;
     }
@@ -243,15 +247,6 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# ------------------------------------------------------------------------------
-# CENTERED TOP HEADER SECTION
-# ------------------------------------------------------------------------------
-st.markdown("""
-    <div class="punter-header-container">
-        <div class="punter-title">PUNTERMATIC</div>
-    </div>
-""", unsafe_allow_html=True)
-
 # Initialize Session State values
 if "nav_page" not in st.session_state:
     st.session_state["nav_page"] = "Live Race Fields & Ratings"
@@ -267,7 +262,7 @@ for k in slider_keys:
 if "admin_authenticated" not in st.session_state:
     st.session_state["admin_authenticated"] = False
 
-# Navigation helper callbacks
+# Navigation helper callback
 def go_to_page(target_page):
     st.session_state["nav_page"] = target_page
 
@@ -288,6 +283,23 @@ curr_idx = pages.index(st.session_state["nav_page"]) if st.session_state["nav_pa
 selected_page = st.sidebar.radio("Navigation Menu", pages, index=curr_idx, label_visibility="collapsed")
 st.session_state["nav_page"] = selected_page
 
+# ------------------------------------------------------------------------------
+# TOP LEFT COMPACT 'MENU' BUTTON (PLACED ABOVE PUNTERMATIC HEADER)
+# ------------------------------------------------------------------------------
+if st.session_state["nav_page"] != "Navigation Menu / Settings":
+    st.markdown('<div class="menu-button-container">', unsafe_allow_html=True)
+    st.button("📋 Menu", on_click=go_to_page, args=("Navigation Menu / Settings",))
+    st.markdown('</div>', unsafe_allow_html=True)
+
+# ------------------------------------------------------------------------------
+# CENTERED TOP HEADER SECTION
+# ------------------------------------------------------------------------------
+st.markdown("""
+    <div class="punter-header-container">
+        <div class="punter-title">PUNTERMATIC</div>
+    </div>
+""", unsafe_allow_html=True)
+
 # Dynamic Database Locator
 user_prof = os.environ.get("USERPROFILE", "")
 possible_paths = [
@@ -301,14 +313,6 @@ for p in possible_paths:
     if os.path.exists(p):
         json_path = p
         break
-
-# ------------------------------------------------------------------------------
-# TOP COMPACT MENU BUTTON (ON MAIN RACE & SLIDER PAGES)
-# ------------------------------------------------------------------------------
-if st.session_state["nav_page"] != "Navigation Menu / Settings":
-    col_a, col_b, col_c = st.columns([2, 1, 2])
-    with col_b:
-        st.button("📋 Menu", on_click=go_to_page, args=("Navigation Menu / Settings",), use_container_width=True)
 
 # ------------------------------------------------------------------------------
 # PAGE 1: LIVE RACE FIELDS & RATINGS
