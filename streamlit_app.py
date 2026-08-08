@@ -6,7 +6,7 @@ import os
 st.set_page_config(page_title="Puntermatic", page_icon="🏇", layout="wide")
 
 # ------------------------------------------------------------------------------
-# CLEAN CSS FALLBACK: PADDING CLEANUP & IN-APP HEADER HIDING
+# CLEAN CSS FALLBACK: PADDING CLEANUP & COMPACT MENU BUTTON STYLING
 # ------------------------------------------------------------------------------
 st.markdown("""
     <style>
@@ -48,7 +48,7 @@ st.markdown("""
         width: 100% !important;
     }
 
-    /* CUSTOM NAVIGATION BUTTON STYLING */
+    /* COMPACT 'MENU' BUTTON STYLING */
     div.stButton > button {
         background-color: #216bd1 !important;
         color: #FFFFFF !important;
@@ -56,7 +56,7 @@ st.markdown("""
         font-weight: 700 !important;
         font-size: 1.1rem !important;
         border-radius: 8px !important;
-        padding: 8px 16px !important;
+        padding: 6px 16px !important;
         margin: 0 auto !important;
         display: block !important;
         box-shadow: 0 2px 4px rgba(0,0,0,0.1) !important;
@@ -252,7 +252,7 @@ st.markdown("""
     </div>
 """, unsafe_allow_html=True)
 
-# Initialize default session state values for active page & core metrics
+# Initialize Session State values
 if "nav_page" not in st.session_state:
     st.session_state["nav_page"] = "Live Race Fields & Ratings"
 
@@ -267,9 +267,13 @@ for k in slider_keys:
 if "admin_authenticated" not in st.session_state:
     st.session_state["admin_authenticated"] = False
 
+# Navigation helper callbacks
+def go_to_page(target_page):
+    st.session_state["nav_page"] = target_page
+
 # Sidebar Setup
 st.sidebar.header("Navigation Menu")
-pages = ["Live Race Fields & Ratings", "Adjust Slider Settings"]
+pages = ["Live Race Fields & Ratings", "Navigation Menu / Settings", "Adjust Slider Settings"]
 
 with st.sidebar.expander("⚙️ Master System Access"):
     admin_pin = st.text_input("Master Key Code", type="password")
@@ -279,8 +283,9 @@ with st.sidebar.expander("⚙️ Master System Access"):
 if st.session_state["admin_authenticated"]:
     pages.append("Admin Calibration Panel")
 
-# Sync radio with session state nav_page
-selected_page = st.sidebar.radio("Navigation Menu", pages, index=pages.index(st.session_state["nav_page"]) if st.session_state["nav_page"] in pages else 0, key="sidebar_radio", label_visibility="collapsed")
+# Sync Sidebar Radio with Session State
+curr_idx = pages.index(st.session_state["nav_page"]) if st.session_state["nav_page"] in pages else 0
+selected_page = st.sidebar.radio("Navigation Menu", pages, index=curr_idx, label_visibility="collapsed")
 st.session_state["nav_page"] = selected_page
 
 # Dynamic Database Locator
@@ -298,16 +303,17 @@ for p in possible_paths:
         break
 
 # ------------------------------------------------------------------------------
+# TOP COMPACT MENU BUTTON (ON MAIN RACE & SLIDER PAGES)
+# ------------------------------------------------------------------------------
+if st.session_state["nav_page"] != "Navigation Menu / Settings":
+    col_a, col_b, col_c = st.columns([2, 1, 2])
+    with col_b:
+        st.button("📋 Menu", on_click=go_to_page, args=("Navigation Menu / Settings",), use_container_width=True)
+
+# ------------------------------------------------------------------------------
 # PAGE 1: LIVE RACE FIELDS & RATINGS
 # ------------------------------------------------------------------------------
 if st.session_state["nav_page"] == "Live Race Fields & Ratings":
-    # NAVIGATION SHORTCUT BUTTON
-    col1, col2, col3 = st.columns([1, 2, 1])
-    with col2:
-        if st.button("⚙️ Go to Category Adjustment Menu", use_container_width=True):
-            st.session_state["nav_page"] = "Adjust Slider Settings"
-            st.rerun()
-
     if not json_path:
         st.error("❌ Database file `Full_Puntermatic_Migration.json` was not found.")
         st.info("Please verify that `Full_Puntermatic_Migration.json` is uploaded to your GitHub repository.")
@@ -399,15 +405,27 @@ if st.session_state["nav_page"] == "Live Race Fields & Ratings":
             st.error(f"Error reading JSON database: {e}")
 
 # ------------------------------------------------------------------------------
-# PAGE 2: USER CATEGORY SLIDER SETTINGS
+# PAGE 2: NAVIGATION MENU / SETTINGS PAGE
+# ------------------------------------------------------------------------------
+elif st.session_state["nav_page"] == "Navigation Menu / Settings":
+    st.markdown('<div class="slider-header-centered">Navigation Hub</div>', unsafe_allow_html=True)
+    st.markdown('<div class="slider-subtitle-centered">Select a destination below:</div>', unsafe_allow_html=True)
+    st.divider()
+
+    col1, col2 = st.columns(2)
+    with col1:
+        st.button("🏇 Live Race Fields & Ratings", on_click=go_to_page, args=("Live Race Fields & Ratings",), use_container_width=True)
+    with col2:
+        st.button("⚙️ Category Adjustment Sliders", on_click=go_to_page, args=("Adjust Slider Settings",), use_container_width=True)
+
+    if st.session_state["admin_authenticated"]:
+        st.write("")
+        st.button("🔒 Admin Calibration Panel", on_click=go_to_page, args=("Admin Calibration Panel",), use_container_width=True)
+
+# ------------------------------------------------------------------------------
+# PAGE 3: USER CATEGORY SLIDER SETTINGS
 # ------------------------------------------------------------------------------
 elif st.session_state["nav_page"] == "Adjust Slider Settings":
-    col1, col2, col3 = st.columns([1, 2, 1])
-    with col2:
-        if st.button("🏇 Back to Live Race Fields", use_container_width=True):
-            st.session_state["nav_page"] = "Live Race Fields & Ratings"
-            st.rerun()
-
     st.markdown('<div class="slider-header-centered">Category Adjustment</div>', unsafe_allow_html=True)
     st.markdown('<div class="slider-subtitle-centered">Category adjustment values can be adjusted from 0.00 to 2.00.</div>', unsafe_allow_html=True)
     st.divider()
@@ -420,15 +438,9 @@ elif st.session_state["nav_page"] == "Adjust Slider Settings":
     st.session_state["u_weight"]  = st.slider("Weight Difference Multiplier", 0.0, 2.0, float(st.session_state["u_weight"]), step=0.05)
 
 # ------------------------------------------------------------------------------
-# PAGE 3: ADMIN CALIBRATION PANEL
+# PAGE 4: ADMIN CALIBRATION PANEL
 # ------------------------------------------------------------------------------
 elif st.session_state["nav_page"] == "Admin Calibration Panel":
-    col1, col2, col3 = st.columns([1, 2, 1])
-    with col2:
-        if st.button("🏇 Back to Live Race Fields", use_container_width=True):
-            st.session_state["nav_page"] = "Live Race Fields & Ratings"
-            st.rerun()
-
     st.subheader("🔒 Master Core Calibration")
     st.write("Master system-wide baseline adjustments:")
     st.divider()
