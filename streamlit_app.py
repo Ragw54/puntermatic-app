@@ -334,7 +334,7 @@ if st.session_state["nav_page"] == "Live Race Fields & Ratings":
                 race_display_map = {k: f"Race {k.replace('R', '').replace('Temp', '')}" for k in raw_keys}
                 
                 # Render clean label
-                st.markdown('<div class="race-select-label">Race Selection</div>', unsafe_allow_html=True)
+                st.markdown('<div class="race-select-label">Select Race</div>', unsafe_allow_html=True)
                 
                 # Render 3-Column Centered Race Buttons
                 selected_raw_key = st.radio(
